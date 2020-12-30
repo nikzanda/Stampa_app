@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class Stampa extends StatefulWidget {
   Stampa({Key key, this.title}) : super(key: key);
@@ -65,7 +64,7 @@ class _StampaState extends State<Stampa> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 // Formato
-                Text("Formato"),
+                Text("Formato", style: TextStyle(fontWeight: FontWeight.bold)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -90,47 +89,42 @@ class _StampaState extends State<Stampa> {
                   ],
                 ),
                 // Copie
-                Text("Copie: $copie"),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Slider(
-                      value: copie.toDouble(),
-                      min: 1,
-                      max: 20,
-                      divisions: 20,
-                      label: copie.round().toString(),
-                      onChanged: (newValue) {
-                        setState(() => copie = newValue.round());
-                      },
-                    )
-                  ],
+                Text("Copie: $copie",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                Slider(
+                  value: copie.toDouble(),
+                  min: 1,
+                  max: 20,
+                  divisions: 20,
+                  label: copie.round().toString(),
+                  onChanged: (newValue) {
+                    setState(() => copie = newValue.round());
+                  },
                 ),
                 // Descrizione
-                Text("Descrizione"),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: <Widget>[
-                SearchableDropdown.single(
-                  items: items,
-                  value: selectedValue,
-                  hint: "Seleziona PC",
-                  searchHint: "Cerca...",
-                  onChanged: (newValue) {
-                    setState(() {
-                      selectedValue = newValue;
-                    });
-                  },
-                  isExpanded: true,
-                ),
-                IconButton(
-                  icon: Icon(Icons.add),
-                  color: Colors.green,
-                  tooltip: "Aggiungi nuovo PC",
-                  onPressed: () {},
+                Text("Descrizione",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                Row(
+                  children: <Widget>[
+                    Flexible(
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: TextField(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.search),
+                      color: Colors.green,
+                      tooltip: "Cerca",
+                      onPressed: () {},
+                    ),
+                  ],
                 )
-                // ],
-                // )
               ],
             ),
           )
