@@ -1,5 +1,3 @@
-// import 'dart:html';
-
 import 'package:flutter/material.dart';
 
 class Stampa extends StatefulWidget {
@@ -21,10 +19,6 @@ class _StampaState extends State<Stampa> {
     setState(() => formato = newValue);
   } //onRadioFormato
 
-  void onSliderCopie(newValue) {
-    setState(() => copie = newValue.round());
-  } //onSliderCopie
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,39 +35,43 @@ class _StampaState extends State<Stampa> {
                   // Formato
                   Text("Formato"),
                   Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Radio(
-                          value: Formato.radio_12_14,
-                          groupValue: formato,
-                          onChanged: onRadioFormato,
-                        ),
-                        Text("12/14 pollici"),
-                        Radio(
-                          value: Formato.radio_15,
-                          groupValue: formato,
-                          onChanged: onRadioFormato,
-                        ),
-                        Text("15 pollici"),
-                        Radio(
-                          value: Formato.radio_altro,
-                          groupValue: formato,
-                          onChanged: onRadioFormato,
-                        ),
-                        Text("altro"),
-                      ]),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Radio(
+                        value: Formato.radio_12_14,
+                        groupValue: formato,
+                        onChanged: onRadioFormato,
+                      ),
+                      Text("12/14 pollici"),
+                      Radio(
+                        value: Formato.radio_15,
+                        groupValue: formato,
+                        onChanged: onRadioFormato,
+                      ),
+                      Text("15 pollici"),
+                      Radio(
+                        value: Formato.radio_altro,
+                        groupValue: formato,
+                        onChanged: onRadioFormato,
+                      ),
+                      Text("altro"),
+                    ],
+                  ),
                   // Copie
                   Text("Copie: $copie"),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Slider(
-                          value: copie.toDouble(),
-                          min: 1,
-                          max: 20,
-                          divisions: 20,
-                          label: copie.round().toString(),
-                          onChanged: onSliderCopie)
+                        value: copie.toDouble(),
+                        min: 1,
+                        max: 20,
+                        divisions: 20,
+                        label: copie.round().toString(),
+                        onChanged: (newValue) {
+                          setState(() => copie = newValue.round());
+                        },
+                      )
                     ],
                   )
                 ],
