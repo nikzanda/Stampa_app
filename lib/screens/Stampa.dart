@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 
 class Stampa extends StatefulWidget {
   Stampa({Key key, this.title}) : super(key: key);
@@ -12,6 +12,21 @@ class Stampa extends StatefulWidget {
 
 enum Formato { radio_12_14, radio_15, radio_altro }
 
+extension FormatoExtension on Formato {
+  String get text {
+    switch (this) {
+      case Formato.radio_12_14:
+        return "12/14 pollici";
+      case Formato.radio_15:
+        return "15 pollici";
+      case Formato.radio_altro:
+        return "altro";
+      default:
+        return "";
+    } //switch
+  }
+}
+
 class _StampaState extends State<Stampa> {
   Formato formato = Formato.radio_12_14;
   int copie = 1;
@@ -19,6 +34,25 @@ class _StampaState extends State<Stampa> {
   void onRadioFormato(newValue) {
     setState(() => formato = newValue);
   } //onRadioFormato
+
+  void sendPrint() async {
+    // print(formato.text);
+
+    var map = new Map<String, dynamic>();
+    map["formato"] = formato.text;
+    map["descrizione"] = "test flutter";
+    map["copie"] = copie.toString();
+
+    print(map);
+
+    // final http.Response
+    var response = await http.post(
+      "https://zanda.ddns.net/api_stampa/inserisci_stampa.php",
+      body: map,
+    );
+
+    print(response.statusCode);
+  } //sendPrint
 
   @override
   Widget build(BuildContext context) {
@@ -111,13 +145,13 @@ class _StampaState extends State<Stampa> {
                 child: Text("Annulla"),
               ),
               RaisedButton(
-                onPressed: () {},
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(16)),
                 ),
                 color: Colors.blue,
                 textColor: Colors.white,
                 child: Text("Stampa"),
+                onPressed: sendPrint,
               )
             ],
           )
