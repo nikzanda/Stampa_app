@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// import 'package:http/http.dart';
 
 class Stampa extends StatefulWidget {
   Stampa({Key key, this.title}) : super(key: key);
@@ -14,37 +15,6 @@ enum Formato { radio_12_14, radio_15, radio_altro }
 class _StampaState extends State<Stampa> {
   Formato formato = Formato.radio_12_14;
   int copie = 1;
-  final List<DropdownMenuItem> items = [];
-  String selectedValue;
-
-  final String loremIpsum =
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-
-  @override
-  void initState() {
-    String wordPair = "";
-    loremIpsum
-        .toLowerCase()
-        .replaceAll(",", "")
-        .replaceAll(".", "")
-        .split(" ")
-        .forEach((word) {
-      if (wordPair.isNotEmpty) {
-        wordPair += word;
-        if (items.indexWhere((item) {
-              return (item.value == wordPair);
-            }) ==
-            -1)
-          items.add(DropdownMenuItem(
-            child: Text(wordPair),
-            value: wordPair,
-          ));
-        wordPair = "";
-      } else
-        wordPair = word + " ";
-    });
-    super.initState();
-  } //initState
 
   void onRadioFormato(newValue) {
     setState(() => formato = newValue);
@@ -127,6 +97,29 @@ class _StampaState extends State<Stampa> {
                 )
               ],
             ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              RaisedButton(
+                onPressed: () {},
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                ),
+                color: Colors.redAccent,
+                textColor: Colors.white,
+                child: Text("Annulla"),
+              ),
+              RaisedButton(
+                onPressed: () {},
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                ),
+                color: Colors.blue,
+                textColor: Colors.white,
+                child: Text("Stampa"),
+              )
+            ],
           )
         ],
       ),
