@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'dart:convert';
 
 class Stampa extends StatefulWidget {
@@ -93,6 +94,17 @@ class _StampaState extends State<Stampa> {
     print(response.statusCode);
   } //sendPrint
 
+  void getTodayPrint() async {
+    String queryString = Uri(queryParameters: {
+      "data1": DateFormat("yyyy-MM-dd").format(DateTime.now())
+    }).query;
+
+    final http.Response response = await http
+        .get(FlutterConfig.get('API_BASE_URL') + "storico.php?$queryString");
+
+    print(response.body);
+  } //getTodayPrint
+
   @override
   Widget build(BuildContext context) {
     SimpleDialog dialog = SimpleDialog(
@@ -140,7 +152,7 @@ class _StampaState extends State<Stampa> {
       appBar: AppBar(
         title: Text(widget.title),
         centerTitle: true,
-        backgroundColor: Color.fromRGBO(52, 58, 64, .8),
+        backgroundColor: Color.fromRGBO(52, 58, 64, .7),
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
@@ -293,6 +305,10 @@ class _StampaState extends State<Stampa> {
             ),
             const Divider(
               color: Colors.grey,
+            ),
+            RaisedButton(
+              child: Text("Stampe di oggi"),
+              onPressed: () => getTodayPrint(),
             ),
           ],
         ),
