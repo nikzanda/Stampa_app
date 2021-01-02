@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Stampa extends StatefulWidget {
   Stampa({Key key, this.title}) : super(key: key);
@@ -35,10 +36,13 @@ class _StampaState extends State<Stampa> {
   FocusNode _descrizioneFocus = FocusNode();
   String _descrizioneHelper = "";
   final _formKey = GlobalKey<FormState>();
+  List<dynamic> descrizioni = [];
 
   @override
   void initState() {
     super.initState();
+
+    setDescrizioni();
 
     _descrizioneFocus.addListener(() {
       _descrizioneHelper = _descrizioneFocus.hasFocus
@@ -59,10 +63,25 @@ class _StampaState extends State<Stampa> {
     setState(() => formato = newValue);
   } //onRadioFormato
 
+  Future<bool> setDescrizioni() =>
+      Future.delayed(Duration(seconds: 1), () async {
+        descrizioni = [];
+
+        final http.Response response = await http
+            .get(FlutterConfig.get('API_BASE_URL') + "descrizioni.php");
+
+        if (response.statusCode > 299) return false;
+
+        descrizioni = jsonDecode(response.body)["descrizioni"];
+
+        // setState(() {});
+        return true;
+      });
+
   void sendPrint() async {
     if (!_formKey.currentState.validate()) return;
 
-    var map = new Map<String, dynamic>();
+    var map = Map<String, dynamic>();
     map["formato"] = formato.text;
     map["descrizione"] = descrizioneController.text;
     map["copie"] = copie.toString();
@@ -77,6 +96,46 @@ class _StampaState extends State<Stampa> {
 
   @override
   Widget build(BuildContext context) {
+    SimpleDialog dialog = SimpleDialog(
+      title: Text("Scegli la descrizione:"),
+      children: <Widget>[
+        Container(
+            height: 300,
+            width: 300,
+            child: FutureBuilder(
+              initialData: false,
+              future: setDescrizioni(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData)
+                  return ListView.builder(
+                    itemCount: descrizioni.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(descrizioni[index]),
+                        onTap: () {
+                          setState(() =>
+                              descrizioneController.text = descrizioni[index]);
+                          Navigator.pop(context, descrizioni[index]);
+                        },
+                      );
+                    },
+                  );
+                else
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 40.0,
+                        width: 40.0,
+                        child: CircularProgressIndicator(),
+                      ),
+                    ],
+                  );
+              },
+            )),
+      ],
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -163,7 +222,12 @@ class _StampaState extends State<Stampa> {
                             ),
                           ],
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          showDialog<void>(
+                            context: context,
+                            builder: (context) => dialog,
+                          );
+                        },
                       ),
                       Padding(
                         padding: EdgeInsets.all(16),
