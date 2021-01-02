@@ -30,7 +30,15 @@ extension FormatoExtension on Formato {
 class _StampaState extends State<Stampa> {
   Formato formato = Formato.radio_12_14;
   int copie = 1;
+  final descrizioneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    descrizioneController.dispose();
+    super.dispose();
+  }
 
   void onRadioFormato(newValue) {
     setState(() => formato = newValue);
@@ -41,7 +49,7 @@ class _StampaState extends State<Stampa> {
 
     var map = new Map<String, dynamic>();
     map["formato"] = formato.text;
-    map["descrizione"] = "test flutter";
+    map["descrizione"] = descrizioneController.text;
     map["copie"] = copie.toString();
 
     final http.Response response = await http.post(
@@ -115,6 +123,7 @@ class _StampaState extends State<Stampa> {
                         child: Padding(
                           padding: EdgeInsets.all(16),
                           child: TextFormField(
+                            controller: descrizioneController,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               isDense: true,
