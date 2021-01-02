@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Stampa extends StatefulWidget {
   Stampa({Key key, this.title}) : super(key: key);
@@ -35,6 +36,7 @@ class _StampaState extends State<Stampa> {
   FocusNode _descrizioneFocus = FocusNode();
   String _descrizioneHelper = "";
   final _formKey = GlobalKey<FormState>();
+  List<dynamic> descrizioni = [];
 
   @override
   void initState() {
@@ -58,6 +60,17 @@ class _StampaState extends State<Stampa> {
   void onRadioFormato(newValue) {
     setState(() => formato = newValue);
   } //onRadioFormato
+
+  void setDescrizioni() async {
+    descrizioni = [];
+
+    final http.Response response =
+        await http.get(FlutterConfig.get('API_BASE_URL') + "descrizioni.php");
+
+    if (response.statusCode > 299) return;
+
+    descrizioni = jsonDecode(response.body)["descrizioni"];
+  } //setDescrizioni
 
   void sendPrint() async {
     if (!_formKey.currentState.validate()) return;
@@ -193,10 +206,14 @@ class _StampaState extends State<Stampa> {
                             ),
                           ],
                         ),
-                        onPressed: () => showDialog<void>(
-                          context: context,
-                          builder: (context) => dialog,
-                        ),
+                        onPressed: () {
+                          setDescrizioni();
+
+                          showDialog<void>(
+                            context: context,
+                            builder: (context) => dialog,
+                          );
+                        },
                       ),
                       Padding(
                         padding: EdgeInsets.all(16),
