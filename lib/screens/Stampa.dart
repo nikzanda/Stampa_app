@@ -31,13 +31,28 @@ class _StampaState extends State<Stampa> {
   Formato formato = Formato.radio_12_14;
   int copie = 1;
   final descrizioneController = TextEditingController();
+  FocusNode _descrizioneFocus = FocusNode();
+  String _descrizioneHelper = "";
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _descrizioneFocus.addListener(() {
+      _descrizioneHelper = _descrizioneFocus.hasFocus
+          ? "La nuova descrizione verrà inserita nell'elenco delle descrizioni."
+          : "";
+
+      setState(() {});
+    });
+  } //initState
 
   @override
   void dispose() {
     descrizioneController.dispose();
     super.dispose();
-  }
+  } //dispose
 
   void onRadioFormato(newValue) {
     setState(() => formato = newValue);
@@ -116,7 +131,6 @@ class _StampaState extends State<Stampa> {
                   // Descrizione
                   Text("Descrizione:",
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  // RaisedButton(
                   OutlineButton(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(16)),
@@ -143,8 +157,11 @@ class _StampaState extends State<Stampa> {
                     padding: EdgeInsets.all(16),
                     child: TextFormField(
                       controller: descrizioneController,
+                      focusNode: _descrizioneFocus,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
+                        hintText: "Inserisci la descrizione",
+                        helperText: _descrizioneHelper,
                         isDense: true,
                       ),
                       validator: (value) {
