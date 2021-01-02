@@ -106,7 +106,7 @@ class _StampaState extends State<Stampa> {
               initialData: false,
               future: setDescrizioni(),
               builder: (context, snapshot) {
-                if (!snapshot.hasData)
+                if (snapshot.hasData)
                   return ListView.builder(
                     itemCount: descrizioni.length,
                     itemBuilder: (context, index) {
@@ -121,10 +121,15 @@ class _StampaState extends State<Stampa> {
                     },
                   );
                 else
-                  return SizedBox(
-                    height: 10.0,
-                    width: 10.0,
-                    child: CircularProgressIndicator(),
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 40.0,
+                        width: 40.0,
+                        child: CircularProgressIndicator(),
+                      ),
+                    ],
                   );
               },
             )),
