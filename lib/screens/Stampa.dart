@@ -74,7 +74,6 @@ class _StampaState extends State<Stampa> {
 
         descrizioni = jsonDecode(response.body)["descrizioni"];
 
-        // setState(() {});
         return true;
       });
 
@@ -143,6 +142,7 @@ class _StampaState extends State<Stampa> {
         centerTitle: true,
       ),
       body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
         onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
         child: Container(
           margin: const EdgeInsets.all(15.0),
