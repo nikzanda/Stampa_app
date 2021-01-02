@@ -30,12 +30,15 @@ extension FormatoExtension on Formato {
 class _StampaState extends State<Stampa> {
   Formato formato = Formato.radio_12_14;
   int copie = 1;
+  final _formKey = GlobalKey<FormState>();
 
   void onRadioFormato(newValue) {
     setState(() => formato = newValue);
   } //onRadioFormato
 
   void sendPrint() async {
+    if (!_formKey.currentState.validate()) return;
+
     var map = new Map<String, dynamic>();
     map["formato"] = formato.text;
     map["descrizione"] = "test flutter";
@@ -59,72 +62,81 @@ class _StampaState extends State<Stampa> {
       body: Column(
         children: <Widget>[
           Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // Formato
-                Text("Formato", style: TextStyle(fontWeight: FontWeight.bold)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Radio(
-                      value: Formato.radio_12_14,
-                      groupValue: formato,
-                      onChanged: onRadioFormato,
-                    ),
-                    Text("12/14 pollici"),
-                    Radio(
-                      value: Formato.radio_15,
-                      groupValue: formato,
-                      onChanged: onRadioFormato,
-                    ),
-                    Text("15 pollici"),
-                    Radio(
-                      value: Formato.radio_altro,
-                      groupValue: formato,
-                      onChanged: onRadioFormato,
-                    ),
-                    Text("altro"),
-                  ],
-                ),
-                // Copie
-                Text("Copie: $copie",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                Slider(
-                  value: copie.toDouble(),
-                  min: 1,
-                  max: 20,
-                  divisions: 20,
-                  label: copie.round().toString(),
-                  onChanged: (newValue) {
-                    setState(() => copie = newValue.round());
-                  },
-                ),
-                // Descrizione
-                Text("Descrizione",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                Row(
-                  children: <Widget>[
-                    Flexible(
-                      child: Padding(
-                        padding: EdgeInsets.all(16),
-                        child: TextField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            isDense: true,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  // Formato
+                  Text("Formato",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Radio(
+                        value: Formato.radio_12_14,
+                        groupValue: formato,
+                        onChanged: onRadioFormato,
+                      ),
+                      Text("12/14 pollici"),
+                      Radio(
+                        value: Formato.radio_15,
+                        groupValue: formato,
+                        onChanged: onRadioFormato,
+                      ),
+                      Text("15 pollici"),
+                      Radio(
+                        value: Formato.radio_altro,
+                        groupValue: formato,
+                        onChanged: onRadioFormato,
+                      ),
+                      Text("altro"),
+                    ],
+                  ),
+                  // Copie
+                  Text("Copie: $copie",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Slider(
+                    value: copie.toDouble(),
+                    min: 1,
+                    max: 20,
+                    divisions: 20,
+                    label: copie.round().toString(),
+                    onChanged: (newValue) {
+                      setState(() => copie = newValue.round());
+                    },
+                  ),
+                  // Descrizione
+                  Text("Descrizione",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Row(
+                    children: <Widget>[
+                      Flexible(
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              isDense: true,
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty)
+                                return "La descrizione è obbligatoria";
+                              return null;
+                            },
                           ),
                         ),
                       ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.search),
-                      color: Colors.green,
-                      tooltip: "Cerca",
-                      onPressed: () {},
-                    ),
-                  ],
-                )
-              ],
+                      IconButton(
+                        icon: Icon(Icons.search),
+                        color: Colors.green,
+                        tooltip: "Cerca",
+                        onPressed: () {},
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
           Row(
