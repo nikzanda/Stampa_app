@@ -92,6 +92,7 @@ class _StampaState extends State<Stampa> {
             borderRadius: BorderRadius.all(Radius.circular(16)),
           ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Center(
                 child: Form(
