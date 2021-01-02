@@ -64,7 +64,7 @@ class _StampaState extends State<Stampa> {
   } //onRadioFormato
 
   Future<bool> setDescrizioni() =>
-      Future.delayed(Duration(seconds: 1), () async {
+      Future.delayed(Duration(seconds: 2), () async {
         descrizioni = [];
 
         final http.Response response = await http
@@ -140,152 +140,161 @@ class _StampaState extends State<Stampa> {
       appBar: AppBar(
         title: Text(widget.title),
         centerTitle: true,
+        backgroundColor: Color.fromRGBO(52, 58, 64, .8),
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: Container(
-          margin: const EdgeInsets.all(15.0),
-          padding: const EdgeInsets.all(3.0),
-          decoration: BoxDecoration(
-            color: Color.fromRGBO(248, 249, 250, 1),
-            border: Border.all(color: Colors.blueAccent),
-            borderRadius: BorderRadius.all(Radius.circular(16)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Center(
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      // Formato
-                      Text("Formato:",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      Row(
+        child: Column(
+          children: <Widget>[
+            Container(
+              margin: const EdgeInsets.all(15.0),
+              padding: const EdgeInsets.all(3.0),
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(248, 249, 250, 1),
+                border: Border.all(color: Colors.blueAccent),
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Center(
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Radio(
-                            value: Formato.radio_12_14,
-                            groupValue: formato,
-                            onChanged: onRadioFormato,
-                          ),
-                          Text("12/14 pollici"),
-                          Radio(
-                            value: Formato.radio_15,
-                            groupValue: formato,
-                            onChanged: onRadioFormato,
-                          ),
-                          Text("15 pollici"),
-                          Radio(
-                            value: Formato.radio_altro,
-                            groupValue: formato,
-                            onChanged: onRadioFormato,
-                          ),
-                          Text("altro"),
-                        ],
-                      ),
-                      // Copie
-                      Text("Copie: $copie",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      Slider(
-                        value: copie.toDouble(),
-                        min: 1,
-                        max: 20,
-                        divisions: 20,
-                        label: copie.round().toString(),
-                        onChanged: (newValue) {
-                          setState(() => copie = newValue.round());
-                        },
-                      ),
-                      // Descrizione
-                      Text("Descrizione:",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      OutlineButton(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(16)),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Icon(
-                              Icons.search,
-                              color: Colors.green,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: 8,
-                                right: 8,
+                          // Formato
+                          Text("Formato:",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Radio(
+                                value: Formato.radio_12_14,
+                                groupValue: formato,
+                                onChanged: onRadioFormato,
                               ),
-                              child: Text("Scegli descrizione"),
-                            ),
-                          ],
-                        ),
-                        onPressed: () {
-                          showDialog<void>(
-                            context: context,
-                            builder: (context) => dialog,
-                          );
-                        },
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(16),
-                        child: TextFormField(
-                          controller: descrizioneController,
-                          focusNode: _descrizioneFocus,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: "Inserisci la descrizione",
-                            helperText: _descrizioneHelper,
-                            isDense: true,
+                              Text("12/14 pollici"),
+                              Radio(
+                                value: Formato.radio_15,
+                                groupValue: formato,
+                                onChanged: onRadioFormato,
+                              ),
+                              Text("15 pollici"),
+                              Radio(
+                                value: Formato.radio_altro,
+                                groupValue: formato,
+                                onChanged: onRadioFormato,
+                              ),
+                              Text("altro"),
+                            ],
                           ),
-                          validator: (value) {
-                            if (value.isEmpty)
-                              return "La descrizione è obbligatoria";
-                            return null;
-                          },
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          RaisedButton(
-                            onPressed: () {
-                              _formKey.currentState.reset();
-                              setState(() {
-                                formato = Formato.radio_12_14;
-                                copie = 1;
-                              });
-                              descrizioneController.text = "";
+                          // Copie
+                          Text("Copie: $copie",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          Slider(
+                            value: copie.toDouble(),
+                            min: 1,
+                            max: 20,
+                            divisions: 20,
+                            label: copie.round().toString(),
+                            onChanged: (newValue) {
+                              setState(() => copie = newValue.round());
                             },
+                          ),
+                          // Descrizione
+                          Text("Descrizione:",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          OutlineButton(
                             shape: RoundedRectangleBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(16)),
                             ),
-                            color: Colors.redAccent,
-                            textColor: Colors.white,
-                            child: Text("Annulla"),
-                          ),
-                          RaisedButton(
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(16)),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.search,
+                                  color: Colors.green,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    left: 8,
+                                    right: 8,
+                                  ),
+                                  child: Text("Scegli descrizione"),
+                                ),
+                              ],
                             ),
-                            color: Colors.blue,
-                            textColor: Colors.white,
-                            child: Text("Stampa"),
-                            onPressed: sendPrint,
+                            onPressed: () {
+                              showDialog<void>(
+                                context: context,
+                                builder: (context) => dialog,
+                              );
+                            },
                           ),
+                          Padding(
+                            padding: EdgeInsets.all(16),
+                            child: TextFormField(
+                              controller: descrizioneController,
+                              focusNode: _descrizioneFocus,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: "Inserisci la descrizione",
+                                helperText: _descrizioneHelper,
+                                isDense: true,
+                              ),
+                              validator: (value) {
+                                if (value.isEmpty)
+                                  return "La descrizione è obbligatoria";
+                                return null;
+                              },
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              RaisedButton(
+                                onPressed: () {
+                                  _formKey.currentState.reset();
+                                  setState(() {
+                                    formato = Formato.radio_12_14;
+                                    copie = 1;
+                                  });
+                                  descrizioneController.text = "";
+                                },
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(16)),
+                                ),
+                                color: Colors.redAccent,
+                                textColor: Colors.white,
+                                child: Text("Annulla"),
+                              ),
+                              RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(16)),
+                                ),
+                                color: Colors.blue,
+                                textColor: Colors.white,
+                                child: Text("Stampa"),
+                                onPressed: sendPrint,
+                              ),
+                            ],
+                          )
                         ],
-                      )
-                    ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+            const Divider(
+              color: Colors.grey,
+            ),
+          ],
         ),
       ),
     );
