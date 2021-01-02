@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// import 'package:flutter_config/flutter_config.dart';
 import 'package:http/http.dart' as http;
 
 class Stampa extends StatefulWidget {
@@ -65,6 +66,8 @@ class _StampaState extends State<Stampa> {
     map["formato"] = formato.text;
     map["descrizione"] = descrizioneController.text;
     map["copie"] = copie.toString();
+
+    // print(FlutterConfig.get('API_BASE_URL'));
 
     final http.Response response = await http.post(
       "https://zanda.ddns.net/api_stampa/inserisci_stampa.php",

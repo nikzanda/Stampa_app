@@ -24,7 +24,9 @@ dependencies:
   flutter:
     sdk: flutter
 
-  http: ^0.12.2
+  http: ^0.12.2 # Netword Requests
+  dio: ^3.0.10 # Netword Requests
+  flutter_config: ^1.0.8 # .env Management
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
