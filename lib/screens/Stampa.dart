@@ -36,17 +36,12 @@ class _StampaState extends State<Stampa> {
   } //onRadioFormato
 
   void sendPrint() async {
-    // print(formato.text);
-
     var map = new Map<String, dynamic>();
     map["formato"] = formato.text;
     map["descrizione"] = "test flutter";
     map["copie"] = copie.toString();
 
-    print(map);
-
-    // final http.Response
-    var response = await http.post(
+    final http.Response response = await http.post(
       "https://zanda.ddns.net/api_stampa/inserisci_stampa.php",
       body: map,
     );
