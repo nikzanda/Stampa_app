@@ -75,7 +75,7 @@ class _StampaState extends State<Stampa> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   // Formato
-                  Text("Formato",
+                  Text("Formato:",
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -114,34 +114,45 @@ class _StampaState extends State<Stampa> {
                     },
                   ),
                   // Descrizione
-                  Text("Descrizione",
+                  Text("Descrizione:",
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  Row(
-                    children: <Widget>[
-                      Flexible(
-                        child: Padding(
-                          padding: EdgeInsets.all(16),
-                          child: TextFormField(
-                            controller: descrizioneController,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              isDense: true,
-                            ),
-                            validator: (value) {
-                              if (value.isEmpty)
-                                return "La descrizione è obbligatoria";
-                              return null;
-                            },
-                          ),
+                  // RaisedButton(
+                  OutlineButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(16)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.search,
+                          color: Colors.green,
                         ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: 8,
+                            right: 8,
+                          ),
+                          child: Text("Scegli descrizione"),
+                        ),
+                      ],
+                    ),
+                    onPressed: () {},
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(16),
+                    child: TextFormField(
+                      controller: descrizioneController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        isDense: true,
                       ),
-                      IconButton(
-                        icon: Icon(Icons.search),
-                        color: Colors.green,
-                        tooltip: "Scegli descrizione",
-                        onPressed: () {},
-                      ),
-                    ],
+                      validator: (value) {
+                        if (value.isEmpty)
+                          return "La descrizione è obbligatoria";
+                        return null;
+                      },
+                    ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
