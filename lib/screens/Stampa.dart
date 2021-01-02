@@ -106,9 +106,9 @@ class _StampaState extends State<Stampa> {
               return ListTile(
                 title: Text(descrizioni[index]),
                 onTap: () {
-                  print(descrizioni[index]);
                   setState(
                       () => descrizioneController.text = descrizioni[index]);
+                  Navigator.pop(context, descrizioni[index]);
                 },
               );
             },
