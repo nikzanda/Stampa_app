@@ -35,7 +35,6 @@ class _StampaState extends State<Stampa> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
     descrizioneController.dispose();
     super.dispose();
   }
@@ -143,7 +142,7 @@ class _StampaState extends State<Stampa> {
                         onPressed: () {},
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
@@ -152,7 +151,14 @@ class _StampaState extends State<Stampa> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               RaisedButton(
-                onPressed: () {},
+                onPressed: () {
+                  _formKey.currentState.reset();
+                  setState(() {
+                    formato = Formato.radio_12_14;
+                    copie = 1;
+                  });
+                  descrizioneController.text = "";
+                },
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(16)),
                 ),
