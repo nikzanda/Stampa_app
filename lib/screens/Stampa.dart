@@ -138,45 +138,45 @@ class _StampaState extends State<Stampa> {
                       IconButton(
                         icon: Icon(Icons.search),
                         color: Colors.green,
-                        tooltip: "Cerca",
+                        tooltip: "Scegli descrizione",
                         onPressed: () {},
                       ),
                     ],
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      RaisedButton(
+                        onPressed: () {
+                          _formKey.currentState.reset();
+                          setState(() {
+                            formato = Formato.radio_12_14;
+                            copie = 1;
+                          });
+                          descrizioneController.text = "";
+                        },
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(16)),
+                        ),
+                        color: Colors.redAccent,
+                        textColor: Colors.white,
+                        child: Text("Annulla"),
+                      ),
+                      RaisedButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(16)),
+                        ),
+                        color: Colors.blue,
+                        textColor: Colors.white,
+                        child: Text("Stampa"),
+                        onPressed: sendPrint,
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              RaisedButton(
-                onPressed: () {
-                  _formKey.currentState.reset();
-                  setState(() {
-                    formato = Formato.radio_12_14;
-                    copie = 1;
-                  });
-                  descrizioneController.text = "";
-                },
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                ),
-                color: Colors.redAccent,
-                textColor: Colors.white,
-                child: Text("Annulla"),
-              ),
-              RaisedButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                ),
-                color: Colors.blue,
-                textColor: Colors.white,
-                child: Text("Stampa"),
-                onPressed: sendPrint,
-              )
-            ],
-          )
         ],
       ),
     );
