@@ -100,39 +100,40 @@ class _StampaState extends State<Stampa> {
       title: Text("Scegli la descrizione:"),
       children: <Widget>[
         Container(
-            height: 300,
-            width: 300,
-            child: FutureBuilder(
-              initialData: false,
-              future: setDescrizioni(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData)
-                  return ListView.builder(
-                    itemCount: descrizioni.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(descrizioni[index]),
-                        onTap: () {
-                          setState(() =>
-                              descrizioneController.text = descrizioni[index]);
-                          Navigator.pop(context, descrizioni[index]);
-                        },
-                      );
-                    },
-                  );
-                else
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 40.0,
-                        width: 40.0,
-                        child: CircularProgressIndicator(),
-                      ),
-                    ],
-                  );
-              },
-            )),
+          height: 300,
+          width: 300,
+          child: FutureBuilder(
+            initialData: false,
+            future: setDescrizioni(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData)
+                return ListView.builder(
+                  itemCount: descrizioni.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(descrizioni[index]),
+                      onTap: () {
+                        setState(() =>
+                            descrizioneController.text = descrizioni[index]);
+                        Navigator.pop(context, descrizioni[index]);
+                      },
+                    );
+                  },
+                );
+              else
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 40.0,
+                      width: 40.0,
+                      child: CircularProgressIndicator(),
+                    ),
+                  ],
+                );
+            },
+          ),
+        ),
       ],
     );
 
