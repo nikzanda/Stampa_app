@@ -42,6 +42,8 @@ class _StampaState extends State<Stampa> {
   void initState() {
     super.initState();
 
+    setDescrizioni();
+
     _descrizioneFocus.addListener(() {
       _descrizioneHelper = _descrizioneFocus.hasFocus
           ? "La nuova descrizione verrà inserita nell'elenco delle descrizioni."
@@ -70,12 +72,14 @@ class _StampaState extends State<Stampa> {
     if (response.statusCode > 299) return;
 
     descrizioni = jsonDecode(response.body)["descrizioni"];
+
+    setState(() {});
   } //setDescrizioni
 
   void sendPrint() async {
     if (!_formKey.currentState.validate()) return;
 
-    var map = new Map<String, dynamic>();
+    var map = Map<String, dynamic>();
     map["formato"] = formato.text;
     map["descrizione"] = descrizioneController.text;
     map["copie"] = copie.toString();
@@ -92,30 +96,23 @@ class _StampaState extends State<Stampa> {
   Widget build(BuildContext context) {
     final SimpleDialog dialog = SimpleDialog(
       title: Text("Scegli la descrizione:"),
-      children: [
-        SimpleDialogItem(
-          icon: Icons.account_circle,
-          color: Colors.orange,
-          text: 'user01@gmail.com',
-          onPressed: () {
-            Navigator.pop(context, 'user01@gmail.com');
-          },
-        ),
-        SimpleDialogItem(
-          icon: Icons.account_circle,
-          color: Colors.green,
-          text: 'user02@gmail.com',
-          onPressed: () {
-            Navigator.pop(context, 'user02@gmail.com');
-          },
-        ),
-        SimpleDialogItem(
-          icon: Icons.add_circle,
-          color: Colors.grey,
-          text: 'Add account',
-          onPressed: () {
-            Navigator.pop(context, 'Add account');
-          },
+      children: <Widget>[
+        Container(
+          height: 300,
+          width: 300,
+          child: ListView.builder(
+            itemCount: descrizioni.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(descrizioni[index]),
+                onTap: () {
+                  print(descrizioni[index]);
+                  setState(
+                      () => descrizioneController.text = descrizioni[index]);
+                },
+              );
+            },
+          ),
         ),
       ],
     );
@@ -207,7 +204,7 @@ class _StampaState extends State<Stampa> {
                           ],
                         ),
                         onPressed: () {
-                          setDescrizioni();
+                          // setDescrizioni();
 
                           showDialog<void>(
                             context: context,
@@ -277,32 +274,3 @@ class _StampaState extends State<Stampa> {
   } //build
 
 } //_StampaState
-
-class SimpleDialogItem extends StatelessWidget {
-  const SimpleDialogItem(
-      {Key key, this.icon, this.color, this.text, this.onPressed})
-      : super(key: key);
-
-  final IconData icon;
-  final Color color;
-  final String text;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SimpleDialogOption(
-      onPressed: onPressed,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(icon, size: 36.0, color: color),
-          Padding(
-            padding: const EdgeInsetsDirectional.only(start: 16.0),
-            child: Text(text),
-          ),
-        ],
-      ),
-    );
-  }
-}
