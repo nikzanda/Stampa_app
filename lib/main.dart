@@ -6,8 +6,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
   await FlutterConfig.loadEnvVariables();
 
-  print(FlutterConfig.get('API_BASE_URL'));
-
   runApp(MyApp());
 } //main
 
