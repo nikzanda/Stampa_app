@@ -120,8 +120,6 @@ class _StampaState extends State<Stampa> {
     totStampe = int.parse(json["tot_stampe"]);
     totCopie = int.parse(json["tot_copie"]);
 
-    // setState(() {});
-
     return List<RigaStampa>.from(
         stampe.map((model) => RigaStampa.fromJson(model)));
   } //getTodayPrintRows
@@ -132,6 +130,53 @@ class _StampaState extends State<Stampa> {
     TextStyle chipLabelStyle = TextStyle(
       fontSize: 13,
       color: Colors.white,
+    );
+
+    // Row totale
+    Row totale = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          "Totale: ",
+          style: TextStyle(fontSize: 18),
+        ),
+        Chip(
+          label: Text("stampe"),
+          avatar: CircleAvatar(
+            radius: 10,
+            child: Text(
+              "0",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13),
+            ),
+            backgroundColor: Colors.white,
+          ),
+          backgroundColor: Colors.red,
+          labelStyle: chipLabelStyle,
+        ),
+        Text(
+          "|",
+          style: TextStyle(fontSize: 18),
+        ),
+        Chip(
+          label: Text("copie"),
+          avatar: CircleAvatar(
+            radius: 10,
+            child: Text(
+              "0",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13),
+            ),
+            backgroundColor: Colors.white,
+          ),
+          backgroundColor: Colors.red,
+          labelStyle: chipLabelStyle,
+        )
+      ],
     );
 
     // Circular Progress Indicator
@@ -388,112 +433,123 @@ class _StampaState extends State<Stampa> {
                               "Stampe di oggi",
                               style: TextStyle(fontSize: 25),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Totale: ",
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                Chip(
-                                  label: Text("stampe"),
-                                  avatar: CircleAvatar(
-                                    radius: 10,
-                                    child: Text(
-                                      totStampe.toString(),
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 13),
-                                    ),
-                                    backgroundColor: Colors.white,
-                                  ),
-                                  backgroundColor:
-                                      totStampe > 0 ? Colors.green : Colors.red,
-                                  labelStyle: chipLabelStyle,
-                                ),
-                                Text(
-                                  "|",
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                Chip(
-                                  label: Text("copie"),
-                                  avatar: CircleAvatar(
-                                    radius: 10,
-                                    child: Text(
-                                      totCopie.toString(),
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 13),
-                                    ),
-                                    backgroundColor: Colors.white,
-                                  ),
-                                  backgroundColor:
-                                      totCopie > 0 ? Colors.blue : Colors.red,
-                                  labelStyle: chipLabelStyle,
-                                )
-                              ],
-                            ),
                             FutureBuilder<List<RigaStampa>>(
                               future: getTodayPrintRows(),
                               builder: (context, snapshot) {
                                 if (snapshot.hasData &&
                                     snapshot.data.length > 0)
-                                  return DataTable(
-                                    columns: <DataColumn>[
-                                      DataColumn(
-                                        label: Text("Descrizione"),
+                                  return Column(
+                                    children: <Widget>[
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Totale: ",
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                          Chip(
+                                            label: Text("stampe"),
+                                            avatar: CircleAvatar(
+                                              radius: 10,
+                                              child: Text(
+                                                totStampe.toString(),
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 13),
+                                              ),
+                                              backgroundColor: Colors.white,
+                                            ),
+                                            backgroundColor: totStampe > 0
+                                                ? Colors.green
+                                                : Colors.red,
+                                            labelStyle: chipLabelStyle,
+                                          ),
+                                          Text(
+                                            "|",
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                          Chip(
+                                            label: Text("copie"),
+                                            avatar: CircleAvatar(
+                                              radius: 10,
+                                              child: Text(
+                                                totCopie.toString(),
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 13),
+                                              ),
+                                              backgroundColor: Colors.white,
+                                            ),
+                                            backgroundColor: totCopie > 0
+                                                ? Colors.blue
+                                                : Colors.red,
+                                            labelStyle: chipLabelStyle,
+                                          )
+                                        ],
                                       ),
-                                      DataColumn(
-                                        label: Text("Formato"),
-                                      ),
-                                      DataColumn(
-                                        label: Text("Copie"),
-                                        numeric: true,
-                                      ),
-                                      DataColumn(
-                                        label: Text(""),
+                                      DataTable(
+                                        columns: <DataColumn>[
+                                          DataColumn(
+                                            label: Text("Descrizione"),
+                                          ),
+                                          DataColumn(
+                                            label: Text("Formato"),
+                                          ),
+                                          DataColumn(
+                                            label: Text("Copie"),
+                                            numeric: true,
+                                          ),
+                                          DataColumn(
+                                            label: Text(""),
+                                          ),
+                                        ],
+                                        rows: snapshot.data
+                                            .map(
+                                              ((stampa) => DataRow(
+                                                    cells: <DataCell>[
+                                                      DataCell(
+                                                        Text(
+                                                            stampa.descrizione),
+                                                      ),
+                                                      DataCell(
+                                                        Text(stampa.formato),
+                                                      ),
+                                                      DataCell(
+                                                        Text(stampa.copie
+                                                            .toString()),
+                                                      ),
+                                                      DataCell(
+                                                        IconButton(
+                                                          icon: Icon(
+                                                              Icons.delete),
+                                                          color: Colors.red,
+                                                          onPressed: () {
+                                                            var map = Map<
+                                                                String,
+                                                                dynamic>();
+                                                            map["ID"] = stampa
+                                                                .id
+                                                                .toString();
+
+                                                            http.post(
+                                                                FlutterConfig.get(
+                                                                        "API_BASE_URL") +
+                                                                    "elimina_stampa.php",
+                                                                body: map);
+
+                                                            setState(() {});
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )),
+                                            )
+                                            .toList(),
                                       ),
                                     ],
-                                    rows: snapshot.data
-                                        .map(
-                                          ((stampa) => DataRow(
-                                                cells: <DataCell>[
-                                                  DataCell(
-                                                    Text(stampa.descrizione),
-                                                  ),
-                                                  DataCell(
-                                                    Text(stampa.formato),
-                                                  ),
-                                                  DataCell(
-                                                    Text(stampa.copie
-                                                        .toString()),
-                                                  ),
-                                                  DataCell(
-                                                    IconButton(
-                                                      icon: Icon(Icons.delete),
-                                                      color: Colors.red,
-                                                      onPressed: () {
-                                                        var map = Map<String,
-                                                            dynamic>();
-                                                        map["ID"] = stampa.id
-                                                            .toString();
-
-                                                        http.post(
-                                                            FlutterConfig.get(
-                                                                    "API_BASE_URL") +
-                                                                "elimina_stampa.php",
-                                                            body: map);
-
-                                                        setState(() {});
-                                                      },
-                                                    ),
-                                                  ),
-                                                ],
-                                              )),
-                                        )
-                                        .toList(),
                                   );
                                 else if (snapshot.connectionState ==
                                     ConnectionState.waiting)
@@ -502,7 +558,12 @@ class _StampaState extends State<Stampa> {
                                   print(snapshot.error);
                                 }
 
-                                return Text("Nessuna stampa");
+                                return Column(
+                                  children: <Widget>[
+                                    totale,
+                                    Text("Nessuna stampa"),
+                                  ],
+                                );
                               },
                             )
                           ],
