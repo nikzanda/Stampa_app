@@ -148,6 +148,47 @@ class _StampaState extends State<Stampa> {
       ],
     );
 
+    final List<Map<String, String>> listOfColumns = [
+      {"Name": "AAAAAA", "Number": "1", "State": "Yes"},
+      {"Name": "BBBBBB", "Number": "2", "State": "no"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -329,51 +370,26 @@ class _StampaState extends State<Stampa> {
                   color: Colors.white,
                   child: ListView.builder(
                     controller: scrollController,
-                    // itemCount: 25,
-                    // itemBuilder: (BuildContext context, int index) {
-                    //   return ListTile(title: Text('Item $index'));
-                    // },
                     itemCount: 1,
                     itemBuilder: (BuildContext context, int index) {
                       return SingleChildScrollView(
                         child: DataTable(
-                          columns: <DataColumn>[
-                            DataColumn(label: Text("test")),
-                            DataColumn(label: Text("prova")),
-                          ],
-                          rows: <DataRow>[
-                            DataRow(
-                              cells: <DataCell>[
-                                DataCell(Text("elemento")),
-                                DataCell(Text("elemento1")),
-                              ],
-                            ),
-                            DataRow(
-                              cells: <DataCell>[
-                                DataCell(Text("element")),
-                                DataCell(Text("element1")),
-                              ],
-                            ),
-                            DataRow(
-                              cells: <DataCell>[
-                                DataCell(Text("element")),
-                                DataCell(Text("element1")),
-                              ],
-                            ),
-                            DataRow(
-                              cells: <DataCell>[
-                                DataCell(Text("element")),
-                                DataCell(Text("element1")),
-                              ],
-                            ),
-                            DataRow(
-                              cells: <DataCell>[
-                                DataCell(Text("element")),
-                                DataCell(Text("element1")),
-                              ],
-                            ),
-                          ],
-                        ),
+                            columns: <DataColumn>[
+                              DataColumn(label: Text("test")),
+                              DataColumn(label: Text("prova")),
+                              DataColumn(label: Text("col")),
+                            ],
+                            rows: listOfColumns
+                                .map(
+                                  ((element) => DataRow(
+                                        cells: <DataCell>[
+                                          DataCell(Text(element["Name"])),
+                                          DataCell(Text(element["Number"])),
+                                          DataCell(Text(element["State"])),
+                                        ],
+                                      )),
+                                )
+                                .toList()),
                       );
                     },
                   ),
