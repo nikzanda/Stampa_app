@@ -398,22 +398,23 @@ class _StampaState extends State<Stampa> {
                     itemBuilder: (BuildContext context, int index) {
                       return SingleChildScrollView(
                         child: DataTable(
-                            columns: <DataColumn>[
-                              DataColumn(label: Text("test")),
-                              DataColumn(label: Text("prova")),
-                              DataColumn(label: Text("col")),
-                            ],
-                            rows: listOfColumns
-                                .map(
-                                  ((element) => DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text(element["Name"])),
-                                          DataCell(Text(element["Number"])),
-                                          DataCell(Text(element["State"])),
-                                        ],
-                                      )),
-                                )
-                                .toList()),
+                          columns: <DataColumn>[
+                            DataColumn(label: Text("test")),
+                            DataColumn(label: Text("prova")),
+                            DataColumn(label: Text("col")),
+                          ],
+                          rows: listOfColumns
+                              .map(
+                                ((element) => DataRow(
+                                      cells: <DataCell>[
+                                        DataCell(Text(element["Name"])),
+                                        DataCell(Text(element["Number"])),
+                                        DataCell(Text(element["State"])),
+                                      ],
+                                    )),
+                              )
+                              .toList(),
+                        ),
                       );
                     },
                   ),
