@@ -37,7 +37,6 @@ class _StampaState extends State<Stampa> {
   FocusNode _descrizioneFocus = FocusNode();
   String _descrizioneHelper = "";
   final _formKey = GlobalKey<FormState>();
-  List<dynamic> descrizioni = [];
 
   @override
   void initState() {
@@ -64,18 +63,14 @@ class _StampaState extends State<Stampa> {
     setState(() => formato = newValue);
   } //onRadioFormato
 
-  Future<bool> setDescrizioni() =>
+  Future<List<dynamic>> setDescrizioni() =>
       Future.delayed(Duration(seconds: 2), () async {
-        descrizioni = [];
-
         final http.Response response = await http
             .get(FlutterConfig.get('API_BASE_URL') + "descrizioni.php");
 
-        if (response.statusCode > 299) return false;
+        if (response.statusCode > 299) return [];
 
-        descrizioni = jsonDecode(response.body)["descrizioni"];
-
-        return true;
+        return jsonDecode(response.body)["descrizioni"];
       });
 
   void sendPrint() async {
@@ -93,6 +88,8 @@ class _StampaState extends State<Stampa> {
 
     print(response.statusCode);
     if (response.statusCode > 299) print("Errore");
+
+    setState(() {});
   } //sendPrint
 
   void getTodayPrintAPI() async {
@@ -122,26 +119,39 @@ class _StampaState extends State<Stampa> {
 
   @override
   Widget build(BuildContext context) {
+    // Circular Progress Indicator
+    Column circularProgressIndicator = Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        SizedBox(
+          height: 40.0,
+          width: 40.0,
+          child: CircularProgressIndicator(),
+        ),
+      ],
+    );
+
+    // Dialog
     SimpleDialog dialog = SimpleDialog(
       title: Text("Scegli la descrizione:"),
       children: <Widget>[
         Container(
           height: 300,
           width: 300,
-          child: FutureBuilder(
-            initialData: false,
+          child: FutureBuilder<List<dynamic>>(
+            initialData: [],
             future: setDescrizioni(),
             builder: (context, snapshot) {
-              if (snapshot.hasData && descrizioni.length > 0)
+              if (snapshot.hasData && snapshot.data.length > 0)
                 return ListView.builder(
-                  itemCount: descrizioni.length,
+                  itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(descrizioni[index]),
+                      title: Text(snapshot.data[index]),
                       onTap: () {
                         setState(() =>
-                            descrizioneController.text = descrizioni[index]);
-                        Navigator.pop(context, descrizioni[index]);
+                            descrizioneController.text = snapshot.data[index]);
+                        Navigator.pop(context, snapshot.data[index]);
                       },
                     );
                   },
@@ -154,22 +164,14 @@ class _StampaState extends State<Stampa> {
                   ],
                 );
 
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(
-                    height: 40.0,
-                    width: 40.0,
-                    child: CircularProgressIndicator(),
-                  ),
-                ],
-              );
+              return circularProgressIndicator;
             },
           ),
         ),
       ],
     );
 
+    // Page content
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -372,7 +374,7 @@ class _StampaState extends State<Stampa> {
                               future: getTodayPrintRows(),
                               builder: (context, snapshot) {
                                 if (snapshot.hasData &&
-                                    snapshot.data.length > 0) {
+                                    snapshot.data.length > 0)
                                   return DataTable(
                                     columns: <DataColumn>[
                                       DataColumn(
@@ -428,7 +430,10 @@ class _StampaState extends State<Stampa> {
                                         )
                                         .toList(),
                                   );
-                                } //if
+                                else if (snapshot.connectionState ==
+                                    ConnectionState.waiting)
+                                  return circularProgressIndicator;
+
                                 return Text("Nessuna stampa");
                               },
                             )
