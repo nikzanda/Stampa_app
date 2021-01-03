@@ -37,7 +37,9 @@ class _StampaState extends State<Stampa> {
   FocusNode _descrizioneFocus = FocusNode();
   String _descrizioneHelper = "";
   final _formKey = GlobalKey<FormState>();
-  List<dynamic> descrizioni = [];
+
+  int totStampe = 0;
+  int totCopie = 0;
 
   @override
   void initState() {
@@ -64,18 +66,14 @@ class _StampaState extends State<Stampa> {
     setState(() => formato = newValue);
   } //onRadioFormato
 
-  Future<bool> setDescrizioni() =>
+  Future<List<dynamic>> setDescrizioni() =>
       Future.delayed(Duration(seconds: 2), () async {
-        descrizioni = [];
-
         final http.Response response = await http
             .get(FlutterConfig.get('API_BASE_URL') + "descrizioni.php");
 
-        if (response.statusCode > 299) return false;
+        if (response.statusCode > 299) return [];
 
-        descrizioni = jsonDecode(response.body)["descrizioni"];
-
-        return true;
+        return jsonDecode(response.body)["descrizioni"];
       });
 
   void sendPrint() async {
@@ -92,9 +90,12 @@ class _StampaState extends State<Stampa> {
     );
 
     print(response.statusCode);
+    if (response.statusCode > 299) print("Errore");
+
+    setState(() {});
   } //sendPrint
 
-  void getTodayPrint() async {
+  void getTodayPrintAPI() async {
     String queryString = Uri(queryParameters: {
       "data1": DateFormat("yyyy-MM-dd").format(DateTime.now())
     }).query;
@@ -103,51 +104,134 @@ class _StampaState extends State<Stampa> {
         .get(FlutterConfig.get('API_BASE_URL') + "storico.php?$queryString");
 
     print(response.body);
-  } //getTodayPrint
+  } //getTodayPrintAPI
+
+  Future<List<RigaStampa>> getTodayPrintRows() async {
+    String queryString = Uri(queryParameters: {
+      "data1": DateFormat("yyyy-MM-dd").format(DateTime.now())
+    }).query;
+
+    final http.Response response = await http
+        .get(FlutterConfig.get('API_BASE_URL') + "storico.php?$queryString");
+
+    var json = jsonDecode(response.body);
+
+    var stampe = json["stampe"];
+    totStampe = int.parse(json["tot_stampe"]);
+    totCopie = int.parse(json["tot_copie"]);
+
+    return List<RigaStampa>.from(
+        stampe.map((model) => RigaStampa.fromJson(model)));
+  } //getTodayPrintRows
 
   @override
   Widget build(BuildContext context) {
+    // Chip Label Style
+    TextStyle chipLabelStyle = TextStyle(
+      fontSize: 13,
+      color: Colors.white,
+    );
+
+    // Row totale
+    Row totale = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          "Totale: ",
+          style: TextStyle(fontSize: 18),
+        ),
+        Chip(
+          label: Text("stampe"),
+          avatar: CircleAvatar(
+            radius: 10,
+            child: Text(
+              "0",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13),
+            ),
+            backgroundColor: Colors.white,
+          ),
+          backgroundColor: Colors.red,
+          labelStyle: chipLabelStyle,
+        ),
+        Text(
+          "|",
+          style: TextStyle(fontSize: 18),
+        ),
+        Chip(
+          label: Text("copie"),
+          avatar: CircleAvatar(
+            radius: 10,
+            child: Text(
+              "0",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13),
+            ),
+            backgroundColor: Colors.white,
+          ),
+          backgroundColor: Colors.red,
+          labelStyle: chipLabelStyle,
+        )
+      ],
+    );
+
+    // Circular Progress Indicator
+    Column circularProgressIndicator = Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        SizedBox(
+          height: 40.0,
+          width: 40.0,
+          child: CircularProgressIndicator(),
+        ),
+      ],
+    );
+
+    // Dialog
     SimpleDialog dialog = SimpleDialog(
       title: Text("Scegli la descrizione:"),
       children: <Widget>[
         Container(
           height: 300,
           width: 300,
-          child: FutureBuilder(
-            initialData: false,
+          child: FutureBuilder<List<dynamic>>(
+            initialData: [],
             future: setDescrizioni(),
             builder: (context, snapshot) {
-              if (snapshot.hasData)
+              if (snapshot.hasData && snapshot.data.length > 0)
                 return ListView.builder(
-                  itemCount: descrizioni.length,
+                  itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(descrizioni[index]),
+                      title: Text(snapshot.data[index]),
                       onTap: () {
                         setState(() =>
-                            descrizioneController.text = descrizioni[index]);
-                        Navigator.pop(context, descrizioni[index]);
+                            descrizioneController.text = snapshot.data[index]);
+                        Navigator.pop(context, snapshot.data[index]);
                       },
                     );
                   },
                 );
-              else
+              else if (snapshot.hasError)
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(
-                      height: 40.0,
-                      width: 40.0,
-                      child: CircularProgressIndicator(),
-                    ),
+                    Text("Errore imprevisto"),
                   ],
                 );
+
+              return circularProgressIndicator;
             },
           ),
         ),
       ],
     );
 
+    // Page content
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -157,165 +241,358 @@ class _StampaState extends State<Stampa> {
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Container(
-                margin: const EdgeInsets.all(15.0),
-                padding: const EdgeInsets.all(3.0),
-                decoration: BoxDecoration(
-                  color: Color.fromRGBO(248, 249, 250, 1),
-                  border: Border.all(color: Colors.blueAccent),
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Center(
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            // Formato
-                            Text("Formato:",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            Row(
+        child: Stack(
+          children: <Widget>[
+            SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    margin: const EdgeInsets.all(15.0),
+                    padding: const EdgeInsets.all(3.0),
+                    decoration: BoxDecoration(
+                      color: Color.fromRGBO(248, 249, 250, 1),
+                      border: Border.all(color: Colors.blueAccent),
+                      borderRadius: BorderRadius.all(Radius.circular(16)),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Center(
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                Radio(
-                                  value: Formato.radio_12_14,
-                                  groupValue: formato,
-                                  onChanged: onRadioFormato,
+                                // Formato
+                                Text("Formato:",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Radio(
+                                      value: Formato.radio_12_14,
+                                      groupValue: formato,
+                                      onChanged: onRadioFormato,
+                                    ),
+                                    Text("12/14 pollici"),
+                                    Radio(
+                                      value: Formato.radio_15,
+                                      groupValue: formato,
+                                      onChanged: onRadioFormato,
+                                    ),
+                                    Text("15 pollici"),
+                                    Radio(
+                                      value: Formato.radio_altro,
+                                      groupValue: formato,
+                                      onChanged: onRadioFormato,
+                                    ),
+                                    Text("altro"),
+                                  ],
                                 ),
-                                Text("12/14 pollici"),
-                                Radio(
-                                  value: Formato.radio_15,
-                                  groupValue: formato,
-                                  onChanged: onRadioFormato,
+                                // Copie
+                                Text("Copie: $copie",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                Slider(
+                                  value: copie.toDouble(),
+                                  min: 1,
+                                  max: 20,
+                                  divisions: 20,
+                                  label: copie.round().toString(),
+                                  onChanged: (newValue) {
+                                    setState(() => copie = newValue.round());
+                                  },
                                 ),
-                                Text("15 pollici"),
-                                Radio(
-                                  value: Formato.radio_altro,
-                                  groupValue: formato,
-                                  onChanged: onRadioFormato,
+                                // Descrizione
+                                Text("Descrizione:",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                OutlineButton(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(16)),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.search,
+                                        color: Colors.green,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 8,
+                                          right: 8,
+                                        ),
+                                        child: Text("Scegli la descrizione"),
+                                      ),
+                                    ],
+                                  ),
+                                  onPressed: () {
+                                    showDialog<void>(
+                                      context: context,
+                                      builder: (context) => dialog,
+                                    );
+                                  },
                                 ),
-                                Text("altro"),
+                                Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: TextFormField(
+                                    controller: descrizioneController,
+                                    focusNode: _descrizioneFocus,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      hintText: "Inserisci la descrizione",
+                                      helperText: _descrizioneHelper,
+                                      isDense: true,
+                                    ),
+                                    validator: (value) {
+                                      if (value.isEmpty)
+                                        return "La descrizione è obbligatoria";
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    RaisedButton(
+                                      onPressed: () {
+                                        _formKey.currentState.reset();
+                                        setState(() {
+                                          formato = Formato.radio_12_14;
+                                          copie = 1;
+                                        });
+                                        descrizioneController.text = "";
+                                      },
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(16)),
+                                      ),
+                                      color: Colors.redAccent,
+                                      textColor: Colors.white,
+                                      child: Text("Annulla"),
+                                    ),
+                                    RaisedButton(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(16)),
+                                      ),
+                                      color: Colors.blue,
+                                      textColor: Colors.white,
+                                      child: Text("Stampa"),
+                                      onPressed: sendPrint,
+                                    ),
+                                  ],
+                                )
                               ],
                             ),
-                            // Copie
-                            Text("Copie: $copie",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            Slider(
-                              value: copie.toDouble(),
-                              min: 1,
-                              max: 20,
-                              divisions: 20,
-                              label: copie.round().toString(),
-                              onChanged: (newValue) {
-                                setState(() => copie = newValue.round());
-                              },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(
+                    color: Colors.grey,
+                  ),
+                  RaisedButton(
+                    child: Text("Stampe di oggi"),
+                    onPressed: () => getTodayPrintAPI(),
+                  ),
+                ],
+              ),
+            ),
+            DraggableScrollableSheet(
+              initialChildSize: 0.3,
+              minChildSize: 0.2,
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
+                return Container(
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(30.0)),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(0.0, 1.0),
+                        blurRadius: 5.0,
+                      ),
+                    ],
+                  ),
+                  child: ListView.builder(
+                    controller: scrollController,
+                    itemCount: 1,
+                    itemBuilder: (BuildContext context, int index) {
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: <Widget>[
+                            Text(
+                              "Stampe di oggi",
+                              style: TextStyle(fontSize: 25),
                             ),
-                            // Descrizione
-                            Text("Descrizione:",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            OutlineButton(
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(16)),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.search,
-                                    color: Colors.green,
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      left: 8,
-                                      right: 8,
-                                    ),
-                                    child: Text("Scegli descrizione"),
-                                  ),
-                                ],
-                              ),
-                              onPressed: () {
-                                showDialog<void>(
-                                  context: context,
-                                  builder: (context) => dialog,
+                            FutureBuilder<List<RigaStampa>>(
+                              future: getTodayPrintRows(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData &&
+                                    snapshot.data.length > 0)
+                                  return Column(
+                                    children: <Widget>[
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Totale: ",
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                          Chip(
+                                            label: Text("stampe"),
+                                            avatar: CircleAvatar(
+                                              radius: 10,
+                                              child: Text(
+                                                totStampe.toString(),
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 13),
+                                              ),
+                                              backgroundColor: Colors.white,
+                                            ),
+                                            backgroundColor: totStampe > 0
+                                                ? Colors.green
+                                                : Colors.red,
+                                            labelStyle: chipLabelStyle,
+                                          ),
+                                          Text(
+                                            "|",
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                          Chip(
+                                            label: Text("copie"),
+                                            avatar: CircleAvatar(
+                                              radius: 10,
+                                              child: Text(
+                                                totCopie.toString(),
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 13),
+                                              ),
+                                              backgroundColor: Colors.white,
+                                            ),
+                                            backgroundColor: totCopie > 0
+                                                ? Colors.blue
+                                                : Colors.red,
+                                            labelStyle: chipLabelStyle,
+                                          )
+                                        ],
+                                      ),
+                                      DataTable(
+                                        columns: <DataColumn>[
+                                          DataColumn(
+                                            label: Text("Descrizione"),
+                                          ),
+                                          DataColumn(
+                                            label: Text("Formato"),
+                                          ),
+                                          DataColumn(
+                                            label: Text("Copie"),
+                                            numeric: true,
+                                          ),
+                                          DataColumn(
+                                            label: Text(""),
+                                          ),
+                                        ],
+                                        rows: snapshot.data
+                                            .map(
+                                              ((stampa) => DataRow(
+                                                    cells: <DataCell>[
+                                                      DataCell(
+                                                        Text(
+                                                            stampa.descrizione),
+                                                      ),
+                                                      DataCell(
+                                                        Text(stampa.formato),
+                                                      ),
+                                                      DataCell(
+                                                        Text(stampa.copie
+                                                            .toString()),
+                                                      ),
+                                                      DataCell(
+                                                        IconButton(
+                                                          icon: Icon(
+                                                              Icons.delete),
+                                                          color: Colors.red,
+                                                          onPressed: () {
+                                                            var map = Map<
+                                                                String,
+                                                                dynamic>();
+                                                            map["ID"] = stampa
+                                                                .id
+                                                                .toString();
+
+                                                            http.post(
+                                                                FlutterConfig.get(
+                                                                        "API_BASE_URL") +
+                                                                    "elimina_stampa.php",
+                                                                body: map);
+
+                                                            setState(() {});
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )),
+                                            )
+                                            .toList(),
+                                      ),
+                                    ],
+                                  );
+                                else if (snapshot.connectionState ==
+                                    ConnectionState.waiting)
+                                  return circularProgressIndicator;
+                                else if (snapshot.hasError) {
+                                  print(snapshot.error);
+                                }
+
+                                return Column(
+                                  children: <Widget>[
+                                    totale,
+                                    Text("Nessuna stampa"),
+                                  ],
                                 );
                               },
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(16),
-                              child: TextFormField(
-                                controller: descrizioneController,
-                                focusNode: _descrizioneFocus,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  hintText: "Inserisci la descrizione",
-                                  helperText: _descrizioneHelper,
-                                  isDense: true,
-                                ),
-                                validator: (value) {
-                                  if (value.isEmpty)
-                                    return "La descrizione è obbligatoria";
-                                  return null;
-                                },
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                RaisedButton(
-                                  onPressed: () {
-                                    _formKey.currentState.reset();
-                                    setState(() {
-                                      formato = Formato.radio_12_14;
-                                      copie = 1;
-                                    });
-                                    descrizioneController.text = "";
-                                  },
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(16)),
-                                  ),
-                                  color: Colors.redAccent,
-                                  textColor: Colors.white,
-                                  child: Text("Annulla"),
-                                ),
-                                RaisedButton(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(16)),
-                                  ),
-                                  color: Colors.blue,
-                                  textColor: Colors.white,
-                                  child: Text("Stampa"),
-                                  onPressed: sendPrint,
-                                ),
-                              ],
                             )
                           ],
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(
-                color: Colors.grey,
-              ),
-              RaisedButton(
-                child: Text("Stampe di oggi"),
-                onPressed: () => getTodayPrint(),
-              ),
-            ],
-          ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
   } //build
 
 } //_StampaState
+
+class RigaStampa {
+  final int id;
+  final String descrizione;
+  final String formato;
+  final int copie;
+  final String timestamp;
+
+  RigaStampa.fromJson(Map<String, dynamic> json)
+      : id = int.parse(json["ID"]),
+        descrizione = json["Descrizione"],
+        formato = json["Formato"],
+        copie = int.parse(json["Copie"]),
+        timestamp = json["TimeStamp"];
+} //RigaStampa
