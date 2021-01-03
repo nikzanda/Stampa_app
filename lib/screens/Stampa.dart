@@ -38,6 +38,9 @@ class _StampaState extends State<Stampa> {
   String _descrizioneHelper = "";
   final _formKey = GlobalKey<FormState>();
 
+  int totStampe = 0;
+  int totCopie = 0;
+
   @override
   void initState() {
     super.initState();
@@ -111,7 +114,11 @@ class _StampaState extends State<Stampa> {
     final http.Response response = await http
         .get(FlutterConfig.get('API_BASE_URL') + "storico.php?$queryString");
 
-    var stampe = jsonDecode(response.body)["stampe"];
+    var json = jsonDecode(response.body);
+
+    var stampe = json["stampe"];
+    // totStampe = json["tot_stampe"];
+    // totCopie = json["tot_copie"];
 
     return List<RigaStampa>.from(
         stampe.map((model) => RigaStampa.fromJson(model)));
@@ -119,6 +126,12 @@ class _StampaState extends State<Stampa> {
 
   @override
   Widget build(BuildContext context) {
+    // Chip Label Style
+    TextStyle chipLabelStyle = TextStyle(
+      fontSize: 13,
+      color: Colors.white,
+    );
+
     // Circular Progress Indicator
     Column circularProgressIndicator = Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -369,7 +382,57 @@ class _StampaState extends State<Stampa> {
                       return SingleChildScrollView(
                         child: Column(
                           children: <Widget>[
-                            Text("Stampe: 1 - 1"),
+                            Text(
+                              "Stampe di oggi",
+                              style: TextStyle(fontSize: 25),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Totale: ",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                Chip(
+                                  label: Text("stampe"),
+                                  avatar: CircleAvatar(
+                                    radius: 10,
+                                    child: Text(
+                                      totStampe.toString(),
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13),
+                                    ),
+                                    backgroundColor: Colors.white,
+                                  ),
+                                  backgroundColor:
+                                      totStampe > 0 ? Colors.green : Colors.red,
+                                  labelStyle: chipLabelStyle,
+                                ),
+                                Text(
+                                  "|",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                Chip(
+                                  label: Text("copie"),
+                                  avatar: CircleAvatar(
+                                    radius: 10,
+                                    child: Text(
+                                      totCopie.toString(),
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13),
+                                    ),
+                                    backgroundColor: Colors.white,
+                                  ),
+                                  backgroundColor:
+                                      totCopie > 0 ? Colors.blue : Colors.red,
+                                  labelStyle: chipLabelStyle,
+                                )
+                              ],
+                            ),
                             FutureBuilder<List<RigaStampa>>(
                               future: getTodayPrintRows(),
                               builder: (context, snapshot) {
