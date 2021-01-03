@@ -103,7 +103,13 @@ class _StampaState extends State<Stampa> {
         .get(FlutterConfig.get('API_BASE_URL') + "storico.php?$queryString");
 
     print(response.body);
+
+    // return response.body;
   } //getTodayPrint
+
+  List<Map<String, String>> getDataTableRows() {
+    return null;
+  } //getDataTableRows
 
   @override
   Widget build(BuildContext context) {
@@ -367,7 +373,18 @@ class _StampaState extends State<Stampa> {
               builder:
                   (BuildContext context, ScrollController scrollController) {
                 return Container(
-                  color: Colors.white,
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(30.0)),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(0.0, 1.0), //(x,y)
+                        blurRadius: 5.0,
+                      ),
+                    ],
+                  ),
                   child: ListView.builder(
                     controller: scrollController,
                     itemCount: 1,
