@@ -241,7 +241,7 @@ class _StampaState extends State<Stampa> {
                                           left: 8,
                                           right: 8,
                                         ),
-                                        child: Text("Scegli descrizione"),
+                                        child: Text("Scegli la descrizione"),
                                       ),
                                     ],
                                   ),
@@ -326,33 +326,55 @@ class _StampaState extends State<Stampa> {
               builder:
                   (BuildContext context, ScrollController scrollController) {
                 return Container(
-                  color: Colors.blue[100],
-                  child:
-                      // DataTable(
-                      //   columns: <DataColumn>[
-                      //     DataColumn(label: Text("test")),
-                      //     DataColumn(label: Text("prova")),
-                      //   ],
-                      //   rows: <DataRow>[
-                      //     DataRow(
-                      //       cells: <DataCell>[
-                      //         DataCell(Text("elemento")),
-                      //         DataCell(Text("elemento1")),
-                      //       ],
-                      //     ),
-                      //     DataRow(
-                      //       cells: <DataCell>[
-                      //         DataCell(Text("element")),
-                      //         DataCell(Text("element1")),
-                      //       ],
-                      //     ),
-                      //   ],
-                      // ),
-                      ListView.builder(
+                  color: Colors.white,
+                  child: ListView.builder(
                     controller: scrollController,
-                    itemCount: 25,
+                    // itemCount: 25,
+                    // itemBuilder: (BuildContext context, int index) {
+                    //   return ListTile(title: Text('Item $index'));
+                    // },
+                    itemCount: 1,
                     itemBuilder: (BuildContext context, int index) {
-                      return ListTile(title: Text('Item $index'));
+                      return SingleChildScrollView(
+                        child: DataTable(
+                          columns: <DataColumn>[
+                            DataColumn(label: Text("test")),
+                            DataColumn(label: Text("prova")),
+                          ],
+                          rows: <DataRow>[
+                            DataRow(
+                              cells: <DataCell>[
+                                DataCell(Text("elemento")),
+                                DataCell(Text("elemento1")),
+                              ],
+                            ),
+                            DataRow(
+                              cells: <DataCell>[
+                                DataCell(Text("element")),
+                                DataCell(Text("element1")),
+                              ],
+                            ),
+                            DataRow(
+                              cells: <DataCell>[
+                                DataCell(Text("element")),
+                                DataCell(Text("element1")),
+                              ],
+                            ),
+                            DataRow(
+                              cells: <DataCell>[
+                                DataCell(Text("element")),
+                                DataCell(Text("element1")),
+                              ],
+                            ),
+                            DataRow(
+                              cells: <DataCell>[
+                                DataCell(Text("element")),
+                                DataCell(Text("element1")),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
                     },
                   ),
                 );
