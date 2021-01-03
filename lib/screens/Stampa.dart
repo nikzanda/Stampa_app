@@ -94,7 +94,7 @@ class _StampaState extends State<Stampa> {
     print(response.statusCode);
   } //sendPrint
 
-  void getTodayPrint() async {
+  void getTodayPrintAPI() async {
     String queryString = Uri(queryParameters: {
       "data1": DateFormat("yyyy-MM-dd").format(DateTime.now())
     }).query;
@@ -105,11 +105,11 @@ class _StampaState extends State<Stampa> {
     print(response.body);
 
     // return response.body;
-  } //getTodayPrint
+  } //getTodayPrintAPI
 
-  List<Map<String, String>> getDataTableRows() {
+  Future<List<RigaStampa>> getTodayPrintRows() {
     return null;
-  } //getDataTableRows
+  } //getTodayPrintRows
 
   @override
   Widget build(BuildContext context) {
@@ -161,46 +161,46 @@ class _StampaState extends State<Stampa> {
       ],
     );
 
-    final List<Map<String, String>> listOfColumns = [
-      {"Name": "AAAAAA", "Number": "1", "State": "Yes"},
-      {"Name": "BBBBBB", "Number": "2", "State": "no"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-      {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    ];
+    // final List<Map<String, String>> listOfColumns = [
+    //   {"Name": "AAAAAA", "Number": "1", "State": "Yes"},
+    //   {"Name": "BBBBBB", "Number": "2", "State": "no"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
+    // ];
 
     return Scaffold(
       appBar: AppBar(
@@ -369,7 +369,7 @@ class _StampaState extends State<Stampa> {
                   ),
                   RaisedButton(
                     child: Text("Stampe di oggi"),
-                    onPressed: () => getTodayPrint(),
+                    onPressed: () => getTodayPrintAPI(),
                   ),
                 ],
               ),
@@ -397,24 +397,35 @@ class _StampaState extends State<Stampa> {
                     itemCount: 1,
                     itemBuilder: (BuildContext context, int index) {
                       return SingleChildScrollView(
-                        child: DataTable(
-                          columns: <DataColumn>[
-                            DataColumn(label: Text("test")),
-                            DataColumn(label: Text("prova")),
-                            DataColumn(label: Text("col")),
+                        child: Column(
+                          children: <Widget>[
+                            Text("Stampe: 1 - 1"),
+                            FutureBuilder<List<RigaStampa>>(
+                              future: getTodayPrintRows(),
+                              builder: (context, snapshot) {
+                                return Text("prova");
+                              },
+                            )
                           ],
-                          rows: listOfColumns
-                              .map(
-                                ((element) => DataRow(
-                                      cells: <DataCell>[
-                                        DataCell(Text(element["Name"])),
-                                        DataCell(Text(element["Number"])),
-                                        DataCell(Text(element["State"])),
-                                      ],
-                                    )),
-                              )
-                              .toList(),
                         ),
+                        // DataTable(
+                        //   columns: <DataColumn>[
+                        //     DataColumn(label: Text("test")),
+                        //     DataColumn(label: Text("prova")),
+                        //     DataColumn(label: Text("col")),
+                        //   ],
+                        //   rows: listOfColumns
+                        //       .map(
+                        //         ((element) => DataRow(
+                        //               cells: <DataCell>[
+                        //                 DataCell(Text(element["Name"])),
+                        //                 DataCell(Text(element["Number"])),
+                        //                 DataCell(Text(element["State"])),
+                        //               ],
+                        //             )),
+                        //       )
+                        //       .toList(),
+                        // ),
                       );
                     },
                   ),
@@ -428,3 +439,16 @@ class _StampaState extends State<Stampa> {
   } //build
 
 } //_StampaState
+
+class RigaStampa {
+  final String descrizione;
+  final String formato;
+  final int copie;
+  final String timestamp;
+
+  RigaStampa.fromJson(Map<String, dynamic> json)
+      : descrizione = json["Descrizione"],
+        formato = json["Formato"],
+        copie = int.parse(json["Copie"]),
+        timestamp = json["TimeStamp"];
+} //RigaStampa
