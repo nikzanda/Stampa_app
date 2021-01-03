@@ -114,17 +114,10 @@ class _StampaState extends State<Stampa> {
     final http.Response response = await http
         .get(FlutterConfig.get('API_BASE_URL') + "storico.php?$queryString");
 
-    var test = jsonDecode(response.body)["stampe"];
+    var stampe = jsonDecode(response.body)["stampe"];
 
-    // print(test);
-
-    // Iterable l = json.decode(response.body);
-    // List<RigaStampa> posts =
-    //     List<RigaStampa>.from(test.map((model) => RigaStampa.fromJson(model)));
-
-    // return null;
     return List<RigaStampa>.from(
-        test.map((model) => RigaStampa.fromJson(model)));
+        stampe.map((model) => RigaStampa.fromJson(model)));
   } //getTodayPrintRows
 
   @override
@@ -176,47 +169,6 @@ class _StampaState extends State<Stampa> {
         ),
       ],
     );
-
-    // final List<Map<String, String>> listOfColumns = [
-    //   {"Name": "AAAAAA", "Number": "1", "State": "Yes"},
-    //   {"Name": "BBBBBB", "Number": "2", "State": "no"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    //   {"Name": "CCCCCC", "Number": "3", "State": "Yes"},
-    // ];
 
     return Scaffold(
       appBar: AppBar(
@@ -403,7 +355,7 @@ class _StampaState extends State<Stampa> {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey,
-                        offset: Offset(0.0, 1.0), //(x,y)
+                        offset: Offset(0.0, 1.0),
                         blurRadius: 5.0,
                       ),
                     ],
@@ -419,30 +371,55 @@ class _StampaState extends State<Stampa> {
                             FutureBuilder<List<RigaStampa>>(
                               future: getTodayPrintRows(),
                               builder: (context, snapshot) {
-                                if (snapshot.hasData) {} //if
+                                if (snapshot.hasData &&
+                                    snapshot.data.length > 0) {
+                                  return DataTable(
+                                    columns: <DataColumn>[
+                                      DataColumn(
+                                        label: Text("Descrizione"),
+                                      ),
+                                      DataColumn(
+                                        label: Text("Formato"),
+                                      ),
+                                      DataColumn(
+                                        label: Text("Copie"),
+                                        numeric: true,
+                                      ),
+                                      DataColumn(
+                                        label: Text(""),
+                                      ),
+                                    ],
+                                    rows: snapshot.data
+                                        .map(
+                                          ((stampa) => DataRow(
+                                                cells: <DataCell>[
+                                                  DataCell(
+                                                    Text(stampa.descrizione),
+                                                  ),
+                                                  DataCell(
+                                                    Text(stampa.formato),
+                                                  ),
+                                                  DataCell(
+                                                    Text(stampa.copie
+                                                        .toString()),
+                                                  ),
+                                                  DataCell(
+                                                    Icon(
+                                                      Icons.delete,
+                                                      color: Colors.red,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )),
+                                        )
+                                        .toList(),
+                                  );
+                                } //if
                                 return Text("Nessuna stampa");
                               },
                             )
                           ],
                         ),
-                        // DataTable(
-                        //   columns: <DataColumn>[
-                        //     DataColumn(label: Text("test")),
-                        //     DataColumn(label: Text("prova")),
-                        //     DataColumn(label: Text("col")),
-                        //   ],
-                        //   rows: listOfColumns
-                        //       .map(
-                        //         ((element) => DataRow(
-                        //               cells: <DataCell>[
-                        //                 DataCell(Text(element["Name"])),
-                        //                 DataCell(Text(element["Number"])),
-                        //                 DataCell(Text(element["State"])),
-                        //               ],
-                        //             )),
-                        //       )
-                        //       .toList(),
-                        // ),
                       );
                     },
                   ),
