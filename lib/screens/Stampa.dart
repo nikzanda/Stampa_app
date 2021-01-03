@@ -404,9 +404,23 @@ class _StampaState extends State<Stampa> {
                                                         .toString()),
                                                   ),
                                                   DataCell(
-                                                    Icon(
-                                                      Icons.delete,
+                                                    IconButton(
+                                                      icon: Icon(Icons.delete),
                                                       color: Colors.red,
+                                                      onPressed: () {
+                                                        var map = Map<String,
+                                                            dynamic>();
+                                                        map["ID"] = stampa.id
+                                                            .toString();
+
+                                                        http.post(
+                                                            FlutterConfig.get(
+                                                                    "API_BASE_URL") +
+                                                                "elimina_stampa.php",
+                                                            body: map);
+
+                                                        setState(() {});
+                                                      },
                                                     ),
                                                   ),
                                                 ],
@@ -435,13 +449,15 @@ class _StampaState extends State<Stampa> {
 } //_StampaState
 
 class RigaStampa {
+  final int id;
   final String descrizione;
   final String formato;
   final int copie;
   final String timestamp;
 
   RigaStampa.fromJson(Map<String, dynamic> json)
-      : descrizione = json["Descrizione"],
+      : id = int.parse(json["ID"]),
+        descrizione = json["Descrizione"],
         formato = json["Formato"],
         copie = int.parse(json["Copie"]),
         timestamp = json["TimeStamp"];
