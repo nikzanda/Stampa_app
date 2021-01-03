@@ -123,7 +123,7 @@ class _StampaState extends State<Stampa> {
             initialData: false,
             future: setDescrizioni(),
             builder: (context, snapshot) {
-              if (snapshot.hasData)
+              if (snapshot.hasData && descrizioni.length > 0)
                 return ListView.builder(
                   itemCount: descrizioni.length,
                   itemBuilder: (context, index) {
@@ -137,17 +137,24 @@ class _StampaState extends State<Stampa> {
                     );
                   },
                 );
-              else
+              else if (snapshot.hasError)
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(
-                      height: 40.0,
-                      width: 40.0,
-                      child: CircularProgressIndicator(),
-                    ),
+                    Text("Errore imprevisto"),
                   ],
                 );
+
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 40.0,
+                    width: 40.0,
+                    child: CircularProgressIndicator(),
+                  ),
+                ],
+              );
             },
           ),
         ),
