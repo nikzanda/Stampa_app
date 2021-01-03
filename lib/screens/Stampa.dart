@@ -321,11 +321,34 @@ class _StampaState extends State<Stampa> {
               ),
             ),
             DraggableScrollableSheet(
+              initialChildSize: 0.3,
+              minChildSize: 0.2,
               builder:
                   (BuildContext context, ScrollController scrollController) {
                 return Container(
                   color: Colors.blue[100],
-                  child: ListView.builder(
+                  child:
+                      // DataTable(
+                      //   columns: <DataColumn>[
+                      //     DataColumn(label: Text("test")),
+                      //     DataColumn(label: Text("prova")),
+                      //   ],
+                      //   rows: <DataRow>[
+                      //     DataRow(
+                      //       cells: <DataCell>[
+                      //         DataCell(Text("elemento")),
+                      //         DataCell(Text("elemento1")),
+                      //       ],
+                      //     ),
+                      //     DataRow(
+                      //       cells: <DataCell>[
+                      //         DataCell(Text("element")),
+                      //         DataCell(Text("element1")),
+                      //       ],
+                      //     ),
+                      //   ],
+                      // ),
+                      ListView.builder(
                     controller: scrollController,
                     itemCount: 25,
                     itemBuilder: (BuildContext context, int index) {
