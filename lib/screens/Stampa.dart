@@ -157,160 +157,162 @@ class _StampaState extends State<Stampa> {
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: Column(
-          children: <Widget>[
-            Container(
-              margin: const EdgeInsets.all(15.0),
-              padding: const EdgeInsets.all(3.0),
-              decoration: BoxDecoration(
-                color: Color.fromRGBO(248, 249, 250, 1),
-                border: Border.all(color: Colors.blueAccent),
-                borderRadius: BorderRadius.all(Radius.circular(16)),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Center(
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          // Formato
-                          Text("Formato:",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Radio(
-                                value: Formato.radio_12_14,
-                                groupValue: formato,
-                                onChanged: onRadioFormato,
-                              ),
-                              Text("12/14 pollici"),
-                              Radio(
-                                value: Formato.radio_15,
-                                groupValue: formato,
-                                onChanged: onRadioFormato,
-                              ),
-                              Text("15 pollici"),
-                              Radio(
-                                value: Formato.radio_altro,
-                                groupValue: formato,
-                                onChanged: onRadioFormato,
-                              ),
-                              Text("altro"),
-                            ],
-                          ),
-                          // Copie
-                          Text("Copie: $copie",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          Slider(
-                            value: copie.toDouble(),
-                            min: 1,
-                            max: 20,
-                            divisions: 20,
-                            label: copie.round().toString(),
-                            onChanged: (newValue) {
-                              setState(() => copie = newValue.round());
-                            },
-                          ),
-                          // Descrizione
-                          Text("Descrizione:",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          OutlineButton(
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(16)),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Container(
+                margin: const EdgeInsets.all(15.0),
+                padding: const EdgeInsets.all(3.0),
+                decoration: BoxDecoration(
+                  color: Color.fromRGBO(248, 249, 250, 1),
+                  border: Border.all(color: Colors.blueAccent),
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Center(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            // Formato
+                            Text("Formato:",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                Icon(
-                                  Icons.search,
-                                  color: Colors.green,
+                                Radio(
+                                  value: Formato.radio_12_14,
+                                  groupValue: formato,
+                                  onChanged: onRadioFormato,
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    left: 8,
-                                    right: 8,
-                                  ),
-                                  child: Text("Scegli descrizione"),
+                                Text("12/14 pollici"),
+                                Radio(
+                                  value: Formato.radio_15,
+                                  groupValue: formato,
+                                  onChanged: onRadioFormato,
                                 ),
+                                Text("15 pollici"),
+                                Radio(
+                                  value: Formato.radio_altro,
+                                  groupValue: formato,
+                                  onChanged: onRadioFormato,
+                                ),
+                                Text("altro"),
                               ],
                             ),
-                            onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                builder: (context) => dialog,
-                              );
-                            },
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(16),
-                            child: TextFormField(
-                              controller: descrizioneController,
-                              focusNode: _descrizioneFocus,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: "Inserisci la descrizione",
-                                helperText: _descrizioneHelper,
-                                isDense: true,
-                              ),
-                              validator: (value) {
-                                if (value.isEmpty)
-                                  return "La descrizione è obbligatoria";
-                                return null;
+                            // Copie
+                            Text("Copie: $copie",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            Slider(
+                              value: copie.toDouble(),
+                              min: 1,
+                              max: 20,
+                              divisions: 20,
+                              label: copie.round().toString(),
+                              onChanged: (newValue) {
+                                setState(() => copie = newValue.round());
                               },
                             ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              RaisedButton(
-                                onPressed: () {
-                                  _formKey.currentState.reset();
-                                  setState(() {
-                                    formato = Formato.radio_12_14;
-                                    copie = 1;
-                                  });
-                                  descrizioneController.text = "";
+                            // Descrizione
+                            Text("Descrizione:",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            OutlineButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(16)),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.search,
+                                    color: Colors.green,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      left: 8,
+                                      right: 8,
+                                    ),
+                                    child: Text("Scegli descrizione"),
+                                  ),
+                                ],
+                              ),
+                              onPressed: () {
+                                showDialog<void>(
+                                  context: context,
+                                  builder: (context) => dialog,
+                                );
+                              },
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(16),
+                              child: TextFormField(
+                                controller: descrizioneController,
+                                focusNode: _descrizioneFocus,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: "Inserisci la descrizione",
+                                  helperText: _descrizioneHelper,
+                                  isDense: true,
+                                ),
+                                validator: (value) {
+                                  if (value.isEmpty)
+                                    return "La descrizione è obbligatoria";
+                                  return null;
                                 },
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(16)),
-                                ),
-                                color: Colors.redAccent,
-                                textColor: Colors.white,
-                                child: Text("Annulla"),
                               ),
-                              RaisedButton(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(16)),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                RaisedButton(
+                                  onPressed: () {
+                                    _formKey.currentState.reset();
+                                    setState(() {
+                                      formato = Formato.radio_12_14;
+                                      copie = 1;
+                                    });
+                                    descrizioneController.text = "";
+                                  },
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(16)),
+                                  ),
+                                  color: Colors.redAccent,
+                                  textColor: Colors.white,
+                                  child: Text("Annulla"),
                                 ),
-                                color: Colors.blue,
-                                textColor: Colors.white,
-                                child: Text("Stampa"),
-                                onPressed: sendPrint,
-                              ),
-                            ],
-                          )
-                        ],
+                                RaisedButton(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(16)),
+                                  ),
+                                  color: Colors.blue,
+                                  textColor: Colors.white,
+                                  child: Text("Stampa"),
+                                  onPressed: sendPrint,
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const Divider(
-              color: Colors.grey,
-            ),
-            RaisedButton(
-              child: Text("Stampe di oggi"),
-              onPressed: () => getTodayPrint(),
-            ),
-          ],
+              const Divider(
+                color: Colors.grey,
+              ),
+              RaisedButton(
+                child: Text("Stampe di oggi"),
+                onPressed: () => getTodayPrint(),
+              ),
+            ],
+          ),
         ),
       ),
     );
