@@ -117,8 +117,10 @@ class _StampaState extends State<Stampa> {
     var json = jsonDecode(response.body);
 
     var stampe = json["stampe"];
-    // totStampe = json["tot_stampe"];
-    // totCopie = json["tot_copie"];
+    totStampe = int.parse(json["tot_stampe"]);
+    totCopie = int.parse(json["tot_copie"]);
+
+    // setState(() {});
 
     return List<RigaStampa>.from(
         stampe.map((model) => RigaStampa.fromJson(model)));
@@ -496,6 +498,9 @@ class _StampaState extends State<Stampa> {
                                 else if (snapshot.connectionState ==
                                     ConnectionState.waiting)
                                   return circularProgressIndicator;
+                                else if (snapshot.hasError) {
+                                  print(snapshot.error);
+                                }
 
                                 return Text("Nessuna stampa");
                               },
