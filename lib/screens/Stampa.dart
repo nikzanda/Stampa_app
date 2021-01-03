@@ -92,6 +92,7 @@ class _StampaState extends State<Stampa> {
     );
 
     print(response.statusCode);
+    if (response.statusCode > 299) print("Errore");
   } //sendPrint
 
   void getTodayPrintAPI() async {
@@ -103,12 +104,27 @@ class _StampaState extends State<Stampa> {
         .get(FlutterConfig.get('API_BASE_URL') + "storico.php?$queryString");
 
     print(response.body);
-
-    // return response.body;
   } //getTodayPrintAPI
 
-  Future<List<RigaStampa>> getTodayPrintRows() {
-    return null;
+  Future<List<RigaStampa>> getTodayPrintRows() async {
+    String queryString = Uri(queryParameters: {
+      "data1": DateFormat("yyyy-MM-dd").format(DateTime.now())
+    }).query;
+
+    final http.Response response = await http
+        .get(FlutterConfig.get('API_BASE_URL') + "storico.php?$queryString");
+
+    var test = jsonDecode(response.body)["stampe"];
+
+    // print(test);
+
+    // Iterable l = json.decode(response.body);
+    // List<RigaStampa> posts =
+    //     List<RigaStampa>.from(test.map((model) => RigaStampa.fromJson(model)));
+
+    // return null;
+    return List<RigaStampa>.from(
+        test.map((model) => RigaStampa.fromJson(model)));
   } //getTodayPrintRows
 
   @override
@@ -403,7 +419,8 @@ class _StampaState extends State<Stampa> {
                             FutureBuilder<List<RigaStampa>>(
                               future: getTodayPrintRows(),
                               builder: (context, snapshot) {
-                                return Text("prova");
+                                if (snapshot.hasData) {} //if
+                                return Text("Nessuna stampa");
                               },
                             )
                           ],
