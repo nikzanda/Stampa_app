@@ -48,9 +48,7 @@ class _StampaState extends State<Stampa> {
     setDescrizioni();
 
     _descrizioneFocus.addListener(() {
-      _descrizioneHelper = _descrizioneFocus.hasFocus
-          ? "La nuova descrizione verrà inserita nell'elenco delle descrizioni."
-          : "";
+      _descrizioneHelper = _descrizioneFocus.hasFocus ? "La nuova descrizione verrà inserita nell'elenco delle descrizioni." : "";
 
       setState(() {});
     });
@@ -66,10 +64,8 @@ class _StampaState extends State<Stampa> {
     setState(() => formato = newValue);
   } //onRadioFormato
 
-  Future<List<dynamic>> setDescrizioni() =>
-      Future.delayed(Duration(seconds: 2), () async {
-        final http.Response response = await http
-            .get(FlutterConfig.get('API_BASE_URL') + "descrizioni.php");
+  Future<List<dynamic>> setDescrizioni() => Future.delayed(Duration(seconds: 2), () async {
+        final http.Response response = await http.get(FlutterConfig.get('API_BASE_URL') + "descrizioni.php");
 
         if (response.statusCode > 299) return [];
 
@@ -96,23 +92,17 @@ class _StampaState extends State<Stampa> {
   } //sendPrint
 
   void getTodayPrintAPI() async {
-    String queryString = Uri(queryParameters: {
-      "data1": DateFormat("yyyy-MM-dd").format(DateTime.now())
-    }).query;
+    String queryString = Uri(queryParameters: {"data1": DateFormat("yyyy-MM-dd").format(DateTime.now())}).query;
 
-    final http.Response response = await http
-        .get(FlutterConfig.get('API_BASE_URL') + "storico.php?$queryString");
+    final http.Response response = await http.get(FlutterConfig.get('API_BASE_URL') + "storico.php?$queryString");
 
     print(response.body);
   } //getTodayPrintAPI
 
   Future<List<RigaStampa>> getTodayPrintRows() async {
-    String queryString = Uri(queryParameters: {
-      "data1": DateFormat("yyyy-MM-dd").format(DateTime.now())
-    }).query;
+    String queryString = Uri(queryParameters: {"data1": DateFormat("yyyy-MM-dd").format(DateTime.now())}).query;
 
-    final http.Response response = await http
-        .get(FlutterConfig.get('API_BASE_URL') + "storico.php?$queryString");
+    final http.Response response = await http.get(FlutterConfig.get('API_BASE_URL') + "storico.php?$queryString");
 
     var json = jsonDecode(response.body);
 
@@ -120,8 +110,7 @@ class _StampaState extends State<Stampa> {
     totStampe = int.parse(json["tot_stampe"]);
     totCopie = int.parse(json["tot_copie"]);
 
-    return List<RigaStampa>.from(
-        stampe.map((model) => RigaStampa.fromJson(model)));
+    return List<RigaStampa>.from(stampe.map((model) => RigaStampa.fromJson(model)));
   } //getTodayPrintRows
 
   @override
@@ -146,10 +135,7 @@ class _StampaState extends State<Stampa> {
             radius: 10,
             child: Text(
               "0",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13),
+              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13),
             ),
             backgroundColor: Colors.white,
           ),
@@ -166,10 +152,7 @@ class _StampaState extends State<Stampa> {
             radius: 10,
             child: Text(
               "0",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13),
+              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13),
             ),
             backgroundColor: Colors.white,
           ),
@@ -209,8 +192,7 @@ class _StampaState extends State<Stampa> {
                     return ListTile(
                       title: Text(snapshot.data[index]),
                       onTap: () {
-                        setState(() =>
-                            descrizioneController.text = snapshot.data[index]);
+                        setState(() => descrizioneController.text = snapshot.data[index]);
                         Navigator.pop(context, snapshot.data[index]);
                       },
                     );
@@ -264,9 +246,7 @@ class _StampaState extends State<Stampa> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 // Formato
-                                Text("Formato:",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
+                                Text("Formato:", style: TextStyle(fontWeight: FontWeight.bold)),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
@@ -291,9 +271,7 @@ class _StampaState extends State<Stampa> {
                                   ],
                                 ),
                                 // Copie
-                                Text("Copie: $copie",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
+                                Text("Copie: $copie", style: TextStyle(fontWeight: FontWeight.bold)),
                                 Slider(
                                   value: copie.toDouble(),
                                   min: 1,
@@ -305,13 +283,10 @@ class _StampaState extends State<Stampa> {
                                   },
                                 ),
                                 // Descrizione
-                                Text("Descrizione:",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
+                                Text("Descrizione:", style: TextStyle(fontWeight: FontWeight.bold)),
                                 OutlineButton(
                                   shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(16)),
+                                    borderRadius: BorderRadius.all(Radius.circular(16)),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -348,15 +323,13 @@ class _StampaState extends State<Stampa> {
                                       isDense: true,
                                     ),
                                     validator: (value) {
-                                      if (value.isEmpty)
-                                        return "La descrizione è obbligatoria";
+                                      if (value.isEmpty) return "La descrizione è obbligatoria";
                                       return null;
                                     },
                                   ),
                                 ),
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
                                     RaisedButton(
                                       onPressed: () {
@@ -368,8 +341,7 @@ class _StampaState extends State<Stampa> {
                                         descrizioneController.text = "";
                                       },
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(16)),
+                                        borderRadius: BorderRadius.all(Radius.circular(16)),
                                       ),
                                       color: Colors.redAccent,
                                       textColor: Colors.white,
@@ -377,8 +349,7 @@ class _StampaState extends State<Stampa> {
                                     ),
                                     RaisedButton(
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(16)),
+                                        borderRadius: BorderRadius.all(Radius.circular(16)),
                                       ),
                                       color: Colors.blue,
                                       textColor: Colors.white,
@@ -407,12 +378,10 @@ class _StampaState extends State<Stampa> {
             DraggableScrollableSheet(
               initialChildSize: 0.3,
               minChildSize: 0.2,
-              builder:
-                  (BuildContext context, ScrollController scrollController) {
+              builder: (BuildContext context, ScrollController scrollController) {
                 return Container(
                   decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(30.0)),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(30.0)),
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
@@ -436,13 +405,11 @@ class _StampaState extends State<Stampa> {
                             FutureBuilder<List<RigaStampa>>(
                               future: getTodayPrintRows(),
                               builder: (context, snapshot) {
-                                if (snapshot.hasData &&
-                                    snapshot.data.length > 0)
+                                if (snapshot.hasData && snapshot.data.length > 0)
                                   return Column(
                                     children: <Widget>[
                                       Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Text(
                                             "Totale: ",
@@ -454,16 +421,11 @@ class _StampaState extends State<Stampa> {
                                               radius: 10,
                                               child: Text(
                                                 totStampe.toString(),
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 13),
+                                                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13),
                                               ),
                                               backgroundColor: Colors.white,
                                             ),
-                                            backgroundColor: totStampe > 0
-                                                ? Colors.green
-                                                : Colors.red,
+                                            backgroundColor: totStampe > 0 ? Colors.green : Colors.red,
                                             labelStyle: chipLabelStyle,
                                           ),
                                           Text(
@@ -476,16 +438,11 @@ class _StampaState extends State<Stampa> {
                                               radius: 10,
                                               child: Text(
                                                 totCopie.toString(),
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 13),
+                                                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13),
                                               ),
                                               backgroundColor: Colors.white,
                                             ),
-                                            backgroundColor: totCopie > 0
-                                                ? Colors.blue
-                                                : Colors.red,
+                                            backgroundColor: totCopie > 0 ? Colors.blue : Colors.red,
                                             labelStyle: chipLabelStyle,
                                           )
                                         ],
@@ -511,34 +468,23 @@ class _StampaState extends State<Stampa> {
                                               ((stampa) => DataRow(
                                                     cells: <DataCell>[
                                                       DataCell(
-                                                        Text(
-                                                            stampa.descrizione),
+                                                        Text(stampa.descrizione),
                                                       ),
                                                       DataCell(
                                                         Text(stampa.formato),
                                                       ),
                                                       DataCell(
-                                                        Text(stampa.copie
-                                                            .toString()),
+                                                        Text(stampa.copie.toString()),
                                                       ),
                                                       DataCell(
                                                         IconButton(
-                                                          icon: Icon(
-                                                              Icons.delete),
+                                                          icon: Icon(Icons.delete),
                                                           color: Colors.red,
                                                           onPressed: () {
-                                                            var map = Map<
-                                                                String,
-                                                                dynamic>();
-                                                            map["ID"] = stampa
-                                                                .id
-                                                                .toString();
+                                                            var map = Map<String, dynamic>();
+                                                            map["ID"] = stampa.id.toString();
 
-                                                            http.post(
-                                                                FlutterConfig.get(
-                                                                        "API_BASE_URL") +
-                                                                    "elimina_stampa.php",
-                                                                body: map);
+                                                            http.post(FlutterConfig.get("API_BASE_URL") + "elimina_stampa.php", body: map);
 
                                                             setState(() {});
                                                           },
@@ -551,8 +497,7 @@ class _StampaState extends State<Stampa> {
                                       ),
                                     ],
                                   );
-                                else if (snapshot.connectionState ==
-                                    ConnectionState.waiting)
+                                else if (snapshot.connectionState == ConnectionState.waiting)
                                   return circularProgressIndicator;
                                 else if (snapshot.hasError) {
                                   print(snapshot.error);
