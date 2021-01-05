@@ -245,6 +245,13 @@ class _StampaState extends State<Stampa> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 15),
+                                  child: Text(
+                                    "Aggiungi stampa",
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                ),
                                 // Formato
                                 Text("Formato:", style: TextStyle(fontWeight: FontWeight.bold)),
                                 Row(
@@ -275,8 +282,8 @@ class _StampaState extends State<Stampa> {
                                 Slider(
                                   value: copie.toDouble(),
                                   min: 1,
-                                  max: 20,
-                                  divisions: 20,
+                                  max: 10,
+                                  divisions: 10,
                                   label: copie.round().toString(),
                                   onChanged: (newValue) {
                                     setState(() => copie = newValue.round());
