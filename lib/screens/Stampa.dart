@@ -69,7 +69,7 @@ class _StampaState extends State<Stampa> {
 
         if (response.statusCode > 299) return [];
 
-        return jsonDecode(response.body)["descrizioni"];
+        return jsonDecode(response.body)["models"];
       });
 
   void sendPrint() async {
