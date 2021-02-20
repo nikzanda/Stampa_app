@@ -65,7 +65,7 @@ class _StampaState extends State<Stampa> {
   } //onRadioFormato
 
   Future<List<dynamic>> setDescrizioni() => Future.delayed(Duration(seconds: 2), () async {
-        final http.Response response = await http.get(FlutterConfig.get('API_BASE_URL') + "descrizioni.php");
+        final http.Response response = await http.get(FlutterConfig.get('API_BASE_URL') + "models");
 
         if (response.statusCode > 299) return [];
 
@@ -76,12 +76,12 @@ class _StampaState extends State<Stampa> {
     if (!_formKey.currentState.validate()) return;
 
     var map = Map<String, dynamic>();
-    map["formato"] = formato.text;
-    map["descrizione"] = descrizioneController.text;
-    map["copie"] = copie.toString();
+    map["Size"] = formato.text;
+    map["Model"] = descrizioneController.text;
+    map["Copies"] = copie.toString();
 
     final http.Response response = await http.post(
-      FlutterConfig.get('API_BASE_URL') + "inserisci_stampa.php",
+      FlutterConfig.get('API_BASE_URL') + "copy",
       body: map,
     );
 
@@ -92,23 +92,23 @@ class _StampaState extends State<Stampa> {
   } //sendPrint
 
   void getTodayPrintAPI() async {
-    String queryString = Uri(queryParameters: {"data1": DateFormat("yyyy-MM-dd").format(DateTime.now())}).query;
+    String queryString = Uri(queryParameters: {"from": DateFormat("yyyy-MM-dd").format(DateTime.now())}).query;
 
-    final http.Response response = await http.get(FlutterConfig.get('API_BASE_URL') + "storico.php?$queryString");
+    final http.Response response = await http.get(FlutterConfig.get('API_BASE_URL') + "history?$queryString");
 
     print(response.body);
   } //getTodayPrintAPI
 
   Future<List<RigaStampa>> getTodayPrintRows() async {
-    String queryString = Uri(queryParameters: {"data1": DateFormat("yyyy-MM-dd").format(DateTime.now())}).query;
+    String queryString = Uri(queryParameters: {"from": DateFormat("yyyy-MM-dd").format(DateTime.now())}).query;
 
-    final http.Response response = await http.get(FlutterConfig.get('API_BASE_URL') + "storico.php?$queryString");
+    final http.Response response = await http.get(FlutterConfig.get('API_BASE_URL') + "history?$queryString");
 
     var json = jsonDecode(response.body);
 
-    var stampe = json["stampe"];
-    totStampe = int.parse(json["tot_stampe"]);
-    totCopie = int.parse(json["tot_copie"]);
+    var stampe = json["prints"];
+    totStampe = int.parse(json["total_prints"]);
+    totCopie = int.parse(json["total_copies"]);
 
     return List<RigaStampa>.from(stampe.map((model) => RigaStampa.fromJson(model)));
   } //getTodayPrintRows
@@ -488,10 +488,9 @@ class _StampaState extends State<Stampa> {
                                                           icon: Icon(Icons.delete),
                                                           color: Colors.red,
                                                           onPressed: () {
-                                                            var map = Map<String, dynamic>();
-                                                            map["ID"] = stampa.id.toString();
+                                                            var id = stampa.id.toString();
 
-                                                            http.post(FlutterConfig.get("API_BASE_URL") + "elimina_stampa.php", body: map);
+                                                            http.delete(FlutterConfig.get("API_BASE_URL") + "copy/$id");
 
                                                             setState(() {});
                                                           },
@@ -543,8 +542,8 @@ class RigaStampa {
 
   RigaStampa.fromJson(Map<String, dynamic> json)
       : id = int.parse(json["ID"]),
-        descrizione = json["Descrizione"],
-        formato = json["Formato"],
-        copie = int.parse(json["Copie"]),
-        timestamp = json["TimeStamp"];
+        descrizione = json["Model"],
+        formato = json["Size"],
+        copie = int.parse(json["Copies"]),
+        timestamp = json["Timestamp"];
 } //RigaStampa
